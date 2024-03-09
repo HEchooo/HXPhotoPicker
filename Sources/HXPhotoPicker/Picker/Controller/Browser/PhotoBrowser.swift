@@ -823,3 +823,39 @@ open class PhotoBrowserVideoCell: PreviewVideoControlViewCell {
         maskLayer.frame = maskBackgroundView.bounds
     }
 }
+
+
+
+extension PhotoBrowser {
+    public override func animationController(
+        forPresented presented: UIViewController,
+        presenting: UIViewController,
+        source: UIViewController
+    ) -> UIViewControllerAnimatedTransitioning? {
+        if !config.allowCustomTransitionAnimation {
+            return nil
+        }
+        return PhotoBrowserTransition(type: .present)
+    }
+
+    public override func animationController(
+        forDismissed dismissed: UIViewController
+    ) -> UIViewControllerAnimatedTransitioning? {
+        if !config.allowCustomTransitionAnimation {
+            return nil
+        }
+        return PhotoBrowserTransition(type: .dismiss)
+    }
+
+    public override func interactionControllerForDismissal(
+        using animator: UIViewControllerAnimatedTransitioning
+    ) -> UIViewControllerInteractiveTransitioning? {
+        if let canInteration = interactiveTransition?.canInteration, canInteration {
+            return interactiveTransition
+        }
+        if let canInteration = dismissInteractiveTransition?.canInteration, canInteration {
+            return dismissInteractiveTransition
+        }
+        return nil
+    }
+}
