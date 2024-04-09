@@ -50,6 +50,7 @@ extension PhotoPreviewViewController: UICollectionViewDataSource {
             videoCell.config(videoView: photoAsset.vedioView)
             videoCell.videoPlayType = config.videoPlayType
             videoCell.statusBarShouldBeHidden = statusBarShouldBeHidden
+            debugPrint(indexPath)
         }
         cell.delegate = self
         cell.photoAsset = photoAsset
@@ -66,7 +67,7 @@ extension PhotoPreviewViewController: UICollectionViewDelegate {
         forItemAt indexPath: IndexPath
     ) {
         let myCell = cell as! PhotoPreviewViewCell
-        myCell.scrollContentView.startAnimated()
+        myCell.scrollContentView?.startAnimated()
         if myCell.photoAsset.mediaType == .video {
             myCell.scrollView.zoomScale = 1
         }

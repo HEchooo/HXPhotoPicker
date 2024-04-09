@@ -138,8 +138,8 @@ class PickerTransition: NSObject, UIViewControllerAnimatedTransitioning {
             
             let cell = previewVC.getCell(for: previewVC.currentPreviewIndex)
             fromView = cell?.scrollContentView
-            if let contentBounds = cell?.scrollContentView.bounds,
-               let rect = cell?.scrollContentView.convert(contentBounds, to: containerView) {
+            if let contentBounds = cell?.scrollContentView?.bounds,
+               let rect = cell?.scrollContentView?.convert(contentBounds, to: containerView) {
                 fromView?.frame = rect
             }
             if let fromView {

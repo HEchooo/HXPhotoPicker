@@ -151,7 +151,6 @@ class PickerInteractiveTransition: UIPercentDrivenInteractiveTransition, UIGestu
         return (true, isTracking)
     }
     func beginInteration(panGR: UIPanGestureRecognizer) {
-        print("beginInteration")
         if canInteration {
             return
         }
@@ -267,7 +266,6 @@ class PickerInteractiveTransition: UIPercentDrivenInteractiveTransition, UIGestu
         }
     }
     func endInteration(panGR: UIPanGestureRecognizer) {
-        print("endInteration")
         canTransition = false
         if !canInteration {
             return
@@ -299,7 +297,6 @@ class PickerInteractiveTransition: UIPercentDrivenInteractiveTransition, UIGestu
         slidingGap = .zero
     }
     func interPercentDidCancel() {
-        print("interPercentDidCancel")
         if let previewViewController = previewViewController, let previewView = previewView {
             panGestureRecognizer.isEnabled = false
             previewViewController.navigationController?.view.isUserInteractionEnabled = false
@@ -403,7 +400,7 @@ class PickerInteractiveTransition: UIPercentDrivenInteractiveTransition, UIGestu
                     previewViewController.navigationController?.navigationBar.alpha = navigationBarAlpha
                 }
             }
-            previewView.scrollContentView.isBacking = true
+            previewView.scrollContentView?.isBacking = true
             let fromVC = transitionContext?.viewController(forKey: .from) as? PhotoPreviewViewController
             let toVC = transitionContext?.viewController(forKey: .to) as? PhotoPickerViewController
             backgroundView.isUserInteractionEnabled = false
@@ -463,7 +460,7 @@ class PickerInteractiveTransition: UIPercentDrivenInteractiveTransition, UIGestu
                     previewView.transform = .identity
                     previewView.frame = toRect
                     previewView.scrollView.contentOffset = .zero
-                    previewView.scrollContentView.frame = CGRect(x: 0, y: 0, width: toRect.width, height: toRect.height)
+                    previewView.scrollContentView?.frame = CGRect(x: 0, y: 0, width: toRect.width, height: toRect.height)
                 }else {
                     previewView.alpha = 0
                     previewView.transform = CGAffineTransform.init(scaleX: 0.1, y: 0.1)
@@ -644,7 +641,6 @@ class PickerInteractiveTransition: UIPercentDrivenInteractiveTransition, UIGestu
         beganInterPercent = true
     }
     func dismissTransition(_ transitionContext: UIViewControllerContextTransitioning) {
-        print("dismissTransition")
         if !canTransition {
             canInteration = false
             beganInterPercent = false
@@ -675,7 +671,7 @@ class PickerInteractiveTransition: UIPercentDrivenInteractiveTransition, UIGestu
             }
             
             if let previewCell = previewViewController.getCell(for: previewViewController.currentPreviewIndex) {
-                previewCell.scrollContentView.hiddenOtherSubview()
+                previewCell.scrollContentView?.hiddenOtherSubview()
                 beforePreviewFrame = previewCell.frame
                 previewView = previewCell
             }

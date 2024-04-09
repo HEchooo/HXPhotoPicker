@@ -188,7 +188,7 @@ extension PhotoPreviewViewController: EditorViewControllerDelegate {
     public func editorViewController(
         transitionPreviewImage editorViewController: EditorViewController
     ) -> UIImage? {
-        getCell(for: currentPreviewIndex)?.scrollContentView.imageView.image
+        getCell(for: currentPreviewIndex)?.scrollContentView?.imageView.image
     }
     
     public func editorViewController(

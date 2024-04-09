@@ -16,6 +16,7 @@ public protocol PhotoPreviewVideoViewDelegate: AnyObject {
     func videoView(hidePlayButton videoView: VideoPlayerView)
     func videoView(showMaskView videoView: VideoPlayerView)
     func videoView(hideMaskView videoView: VideoPlayerView)
+    func videoView(readyToPlay: VideoPlayerView)
 
     func videoView(_ videoView: VideoPlayerView, isPlaybackLikelyToKeepUp: Bool)
 
@@ -34,6 +35,7 @@ public extension PhotoPreviewVideoViewDelegate {
     func videoView(hidePlayButton videoView: VideoPlayerView) {}
     func videoView(showMaskView videoView: VideoPlayerView) {}
     func videoView(hideMaskView videoView: VideoPlayerView) {}
+    func videoView(readyToPlay: VideoPlayerView) {}
     func videoView(_ videoView: VideoPlayerView, isPlaybackLikelyToKeepUp: Bool) {}
     func videoView(readyForDisplay videoView: VideoPlayerView) {}
     func videoView(resetPlay videoView: VideoPlayerView) {}
@@ -68,6 +70,10 @@ public class PhotoPreviewVideoView: VideoPlayerView {
     var isNetwork: Bool = true
     var playerTime: CGFloat = 0
     var isPlaying: Bool = false
+
+    var isStartedPlay: Bool {
+        self.playbackTimeObserver != nil
+    }
 
     private var loadingView: ProgressHUD?
     private var didEnterBackground: Bool = false
@@ -286,6 +292,7 @@ public class PhotoPreviewVideoView: VideoPlayerView {
                     switch playerItem.status {
                     case AVPlayerItem.Status.readyToPlay:
                         // 可以播放了
+                        self.delegate?.videoView(readyToPlay: self)
                         self.delegate?.videoView(self, readyToPlay: CGFloat(CMTimeGetSeconds(playerItem.duration)))
                         self.loadingView?.isHidden = true
                         self.delegate?.videoView(self, isPlaybackLikelyToKeepUp: true)
@@ -398,5 +405,6 @@ public class PhotoPreviewVideoView: VideoPlayerView {
     deinit {
         readyForDisplayObservation = nil
         NotificationCenter.default.removeObserver(self)
+        debugPrint("\(Self.self) is deinit")
     }
 }

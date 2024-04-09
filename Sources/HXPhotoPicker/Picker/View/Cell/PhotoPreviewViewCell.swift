@@ -25,13 +25,18 @@ open class PhotoPreviewViewCell: UICollectionViewCell, UIScrollViewDelegate {
     public var photoAsset: PhotoAsset! {
         didSet {
             setupScrollViewContentSize()
-            scrollContentView.photoAsset = photoAsset
+            scrollContentView?.photoAsset = photoAsset
         }
     }
     
     weak var delegate: PhotoPreviewViewCellDelegate?
     
-    var scrollContentView: PhotoPreviewContentViewProtocol!
+    var scrollContentView: PhotoPreviewContentViewProtocol? {
+        didSet {
+            guard let scrollContentView else { return }
+            scrollView.addSubview(scrollContentView)
+        }
+    }
     var scrollView: UIScrollView!
     
     var statusBarShouldBeHidden = false
@@ -70,7 +75,7 @@ open class PhotoPreviewViewCell: UICollectionViewCell, UIScrollViewDelegate {
             singleTap.require(toFail: doubleTap)
             scrollView.addGestureRecognizer(doubleTap)
         }
-        scrollView.addSubview(scrollContentView)
+//        scrollView.addSubview(scrollContentView)
         let longPress = UILongPressGestureRecognizer(target: self, action: #selector(longPressClick(longPress:)))
         scrollView.addGestureRecognizer(longPress)
         contentView.addSubview(scrollView)
@@ -80,7 +85,7 @@ open class PhotoPreviewViewCell: UICollectionViewCell, UIScrollViewDelegate {
         if !UIDevice.isPortrait {
             return
         }
-        if scrollContentView.width != width {
+        if scrollContentView?.width != width {
             if UIDevice.isPad  {
                 setupLandscapeContentSize()
             }else {
@@ -105,10 +110,10 @@ open class PhotoPreviewViewCell: UICollectionViewCell, UIScrollViewDelegate {
         }else {
             scrollView.maximumZoomScale = height * 2.5 / contentHeight
         }
-        scrollContentView.frame = CGRect(x: 0, y: 0, width: contentWidth, height: contentHeight)
+        scrollContentView?.frame = CGRect(x: 0, y: 0, width: contentWidth, height: contentHeight)
         if contentHeight < height {
             scrollView.contentSize = size
-            scrollContentView.center = CGPoint(x: width * 0.5, y: height * 0.5)
+            scrollContentView?.center = CGPoint(x: width * 0.5, y: height * 0.5)
         }else {
             scrollView.contentSize = CGSize(width: contentWidth, height: contentHeight)
         }
@@ -121,20 +126,21 @@ open class PhotoPreviewViewCell: UICollectionViewCell, UIScrollViewDelegate {
             contentHeight = width / contentWidth * contentHeight
             contentWidth = width
             scrollView.maximumZoomScale = height / contentHeight + 0.5
-            scrollContentView.frame = CGRect(x: 0, y: 0, width: contentWidth, height: contentHeight)
-            scrollView.contentSize = scrollContentView.size
+            scrollContentView?.frame = CGRect(x: 0, y: 0, width: contentWidth, height: contentHeight)
+            scrollView.contentSize = scrollContentView?.size ?? .zero
         }else {
             scrollView.maximumZoomScale = width / contentWidth + 0.5
-            scrollContentView.frame = CGRect(x: 0, y: 0, width: contentWidth, height: contentHeight)
+            scrollContentView?.frame = CGRect(x: 0, y: 0, width: contentWidth, height: contentHeight)
             scrollView.contentSize = size
         }
-        scrollContentView.center = CGPoint(x: width * 0.5, y: height * 0.5)
+        scrollContentView?.center = CGPoint(x: width * 0.5, y: height * 0.5)
     }
     func requestPreviewAsset() {
-        scrollContentView.requestPreviewAsset()
+        scrollContentView?.requestPreviewAsset()
     }
     func cancelRequest() {
-        scrollContentView.cancelRequest()
+        scrollContentView?.videoView.stopPlay()
+//        scrollContentView?.cancelRequest()
     }
     @objc func singleTap(tap: UITapGestureRecognizer) {
         delegate?.cell(singleTap: self)
@@ -171,7 +177,7 @@ open class PhotoPreviewViewCell: UICollectionViewCell, UIScrollViewDelegate {
             (scrollView.width - scrollView.contentSize.width) * 0.5 : 0.0
         let offsetY = (scrollView.height > scrollView.contentSize.height) ?
             (scrollView.height - scrollView.contentSize.height) * 0.5 : 0.0
-        scrollContentView.center = CGPoint(
+        scrollContentView?.center = CGPoint(
             x: scrollView.contentSize.width * 0.5 + offsetX,
             y: scrollView.contentSize.height * 0.5 + offsetY
         )

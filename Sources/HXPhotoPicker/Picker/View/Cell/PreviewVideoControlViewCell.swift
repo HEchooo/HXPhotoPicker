@@ -15,6 +15,14 @@ open class PreviewVideoControlViewCell: PreviewVideoViewCell, EMVideoPlaySliderV
 
     override init(frame: CGRect) {
         super.init(frame: frame)
+        sliderView = EMVideoPlaySliderView()
+        sliderView.delegate = self
+
+        contentView.addSubview(sliderView)
+    }
+
+    deinit {
+        debugPrint("\(Self.self) is deinit")
     }
 
     override public func config(videoView: PhotoPreviewContentVideoView? = nil) {
@@ -24,17 +32,19 @@ open class PreviewVideoControlViewCell: PreviewVideoViewCell, EMVideoPlaySliderV
 //        maskLayer = PhotoTools.getGradientShadowLayer(false)
 //        maskBackgroundView.layer.addSublayer(maskLayer)
 //        contentView.addSubview(maskBackgroundView)
-        sliderView = EMVideoPlaySliderView()
-        sliderView.delegate = self
 
-        contentView.addSubview(sliderView)
         updateScrollContentView()
-
         hideToolView()
     }
 
+    open override func prepareForReuse() {
+        super.prepareForReuse()
+        scrollContentView?.removeFromSuperview()
+        scrollContentView = nil
+    }
+
     private func updateScrollContentView() {
-        guard let currentItem = scrollContentView.videoView.player.currentItem else { return }
+        guard let scrollContentView, let currentItem = scrollContentView.videoView.player.currentItem else { return }
         videoView(scrollContentView.videoView, readyToPlay: CGFloat(CMTimeGetSeconds(currentItem.duration)))
         videoView(scrollContentView.videoView, isPlaybackLikelyToKeepUp: currentItem.isPlaybackLikelyToKeepUp)
     }

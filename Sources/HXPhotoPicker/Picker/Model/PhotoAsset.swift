@@ -27,7 +27,7 @@ open class PhotoAsset: Equatable, PhotoAssetEquatable {
     /// 媒体子类型
     public var mediaSubType: MediaSubType = .image
 
-    public var vedioView: PhotoPreviewContentVideoView?
+    public weak var vedioView: PhotoPreviewContentVideoView?
 
     #if HXPICKER_ENABLE_EDITOR
     /// 编辑之后的数据

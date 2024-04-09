@@ -119,6 +119,7 @@ public class PhotoPeekViewController: UIViewController {
         fatalError("init(coder:) has not been implemented")
     }
 }
+
 extension PhotoPeekViewController: PhotoPreviewContentViewDelete {
     public func contentView(requestSucceed contentView: PhotoPreviewContentViewProtocol) {
         delegate?.photoPeekViewController(requestSucceed: self)

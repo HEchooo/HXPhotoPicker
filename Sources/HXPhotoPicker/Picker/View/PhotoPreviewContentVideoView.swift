@@ -18,6 +18,10 @@ public class PhotoPreviewContentVideoView: PhotoPreviewContentPhotoView {
 
     private var isNetworkVideoLoading: Bool = false
 
+    deinit {
+        debugPrint("\(Self.self) is deinit")
+    }
+
     override func initViews() {
         super.initViews()
         videoView = PhotoPreviewVideoView()
@@ -33,9 +37,14 @@ public class PhotoPreviewContentVideoView: PhotoPreviewContentPhotoView {
     }
 
     override public func requestPreviewAsset() {
+        guard let photoAsset else { return }
         switch photoAsset.mediaSubType {
         case .networkVideo:
-            requestNetworkVideo()
+            if videoView.isStartedPlay {
+                videoView.startPlay()
+            } else {
+                requestNetworkVideo()
+            }
             return
         default:
             break
@@ -93,6 +102,7 @@ public class PhotoPreviewContentVideoView: PhotoPreviewContentPhotoView {
         super.cancelRequest()
         videoView.cancelPlayer()
         videoView.alpha = 0
+        guard let photoAsset else { return }
         switch photoAsset.mediaSubType {
         case .networkVideo:
             cancelRequestNetworkVideo()

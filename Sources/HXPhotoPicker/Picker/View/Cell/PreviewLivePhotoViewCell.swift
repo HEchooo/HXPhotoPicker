@@ -13,7 +13,7 @@ class PreviewLivePhotoViewCell: PhotoPreviewViewCell, PhotoPreviewContentViewDel
     
     var livePhotoPlayType: PhotoPreviewViewController.PlayType = .once {
         didSet {
-            scrollContentView.livePhotoPlayType = livePhotoPlayType
+            scrollContentView?.livePhotoPlayType = livePhotoPlayType
         }
     }
 
@@ -62,7 +62,7 @@ class PreviewLivePhotoViewCell: PhotoPreviewViewCell, PhotoPreviewContentViewDel
     override init(frame: CGRect) {
         super.init(frame: frame)
         scrollContentView = PhotoPreviewContentLivePhotoView()
-        scrollContentView.delegate = self
+        scrollContentView?.delegate = self
         initView()
         
         let effect = UIBlurEffect(style: .light)
@@ -125,7 +125,7 @@ class PreviewLivePhotoViewCell: PhotoPreviewViewCell, PhotoPreviewContentViewDel
     }
     
     func showMark() {
-        guard let liveMarkConfig = liveMarkConfig else {
+        guard let scrollContentView, let liveMarkConfig = liveMarkConfig else {
             return
         }
         #if HXPICKER_ENABLE_EDITOR

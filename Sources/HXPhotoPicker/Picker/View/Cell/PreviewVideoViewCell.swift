@@ -19,21 +19,12 @@ open class PreviewVideoViewCell: PhotoPreviewViewCell {
             if videoPlayType == .auto || videoPlayType == .once {
                 playButton.isSelected = true
             }
-            scrollContentView.videoView.videoPlayType = videoPlayType
+            scrollContentView?.videoView.videoPlayType = videoPlayType
         }
     }
 
     override init(frame: CGRect) {
         super.init(frame: frame)
-    }
-
-    func config(videoView: PhotoPreviewContentVideoView? = nil) {
-        scrollContentView = videoView ?? PhotoPreviewContentVideoView()
-        scrollContentView.delegate = self
-        scrollContentView.videoView.delegate = self
-        scrollContentView.gestureRecognizers = []
-        let singleTap = UITapGestureRecognizer(target: self, action: #selector(scrollContentViewSingleTap))
-        scrollContentView.addGestureRecognizer(singleTap)
         initView()
         playButton = UIButton(type: UIButton.ButtonType.custom)
         playButton.setImage(.imageResource.picker.preview.emvideoPlay.eimage, for: UIControl.State.normal)
@@ -41,17 +32,26 @@ open class PreviewVideoViewCell: PhotoPreviewViewCell {
         playButton.addTarget(self, action: #selector(didPlayButtonClick(button:)), for: UIControl.Event.touchUpInside)
         playButton.size = playButton.currentImage!.size
         playButton.alpha = 0
-        playButton.isSelected = scrollContentView.videoView.isPlaying
         addSubview(playButton)
+    }
+
+    func config(videoView: PhotoPreviewContentVideoView? = nil) {
+        scrollContentView = videoView ?? PhotoPreviewContentVideoView()
+        scrollContentView?.delegate = self
+        scrollContentView?.videoView.delegate = self
+        scrollContentView?.gestureRecognizers = []
+        let singleTap = UITapGestureRecognizer(target: self, action: #selector(scrollContentViewSingleTap))
+        scrollContentView?.addGestureRecognizer(singleTap)
+        playButton.isSelected = scrollContentView?.videoView.isPlaying ?? false
     }
 
     @objc
     private func didPlayButtonClick(button: UIButton) {
         if !button.isSelected {
-            scrollContentView.videoView.startPlay()
+            scrollContentView?.videoView.startPlay()
             showPlayButton(show: false)
         } else {
-            scrollContentView.videoView.stopPlay()
+            scrollContentView?.videoView.stopPlay()
         }
     }
 
@@ -80,18 +80,18 @@ open class PreviewVideoViewCell: PhotoPreviewViewCell {
     ///   - time: 指定的时间
     ///   - isPlay: 设置完是否需要播放
     public func seek(to time: TimeInterval, isPlay: Bool) {
-        scrollContentView.videoView.seek(to: time, isPlay: isPlay)
+        scrollContentView?.videoView.seek(to: time, isPlay: isPlay)
         resetShowToolTask()
     }
 
     /// 播放视频
     public func playVideo() {
-        scrollContentView.videoView.startPlay()
+        scrollContentView?.videoView.startPlay()
     }
 
     /// 暂停视频
     public func pauseVideo() {
-        scrollContentView.videoView.stopPlay()
+        scrollContentView?.videoView.stopPlay()
     }
 
     /// 视频加载成功准备播放
@@ -215,7 +215,7 @@ extension PreviewVideoViewCell: PhotoPreviewVideoViewDelegate {
            !videoAsset.videoSize.equalTo(presentationSize)
         {
             photoAsset.networkVideoAsset?.videoSize = presentationSize
-            scrollContentView.updateContentSize(presentationSize)
+            scrollContentView?.updateContentSize(presentationSize)
         }
     }
 }
@@ -230,7 +230,7 @@ public extension PreviewVideoViewCell {
                 }
             }
         } else {
-            if playButton.alpha == 1, scrollContentView.videoView.isPlaying {
+            if playButton.alpha == 1, scrollContentView?.videoView.isPlaying ?? false {
                 UIView.animate(withDuration: 0.15) {
                     self.playButton.alpha = 0
                 } completion: { isFinished in

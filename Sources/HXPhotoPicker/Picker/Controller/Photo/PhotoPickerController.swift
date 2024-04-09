@@ -111,7 +111,7 @@ open class PhotoPickerController: UINavigationController {
     public func getCurrentPreviewImageView() -> UIImageView? {
         if let previewVC = previewViewController,
            let cell = previewVC.getCell(for: previewVC.currentPreviewIndex) {
-            return cell.scrollContentView.imageView.imageView
+            return cell.scrollContentView?.imageView.imageView
         }
         return nil
     }

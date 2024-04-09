@@ -114,7 +114,7 @@ extension PhotoPreviewViewController: PhotoToolBarDelegate {
             let cell = getCell(
                 for: currentPreviewIndex
             )
-            cell?.scrollContentView.stopVideo()
+            cell?.scrollContentView?.stopVideo()
             var videoEditorConfig = pickerConfig.editor
             let isExceedsTheLimit = pickerController.pickerData.videoDurationExceedsTheLimit(
                 photoAsset
@@ -198,7 +198,7 @@ extension PhotoPreviewViewController: PhotoToolBarDelegate {
                 let cell = getCell(
                     for: currentPreviewIndex
                 )
-                cell?.scrollContentView.stopLivePhoto()
+                cell?.scrollContentView?.stopLivePhoto()
             }
             photoEditorConfig.languageType = pickerConfig.languageType
             photoEditorConfig.indicatorType = pickerConfig.indicatorType

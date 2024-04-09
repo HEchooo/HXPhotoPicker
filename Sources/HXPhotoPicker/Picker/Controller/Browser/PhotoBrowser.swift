@@ -449,6 +449,7 @@ open class PhotoBrowser: PhotoPickerController {
     
     deinit {
         NotificationCenter.default.removeObserver(self)
+        debugPrint("\(Self.self) is deinit")
     }
 }
 

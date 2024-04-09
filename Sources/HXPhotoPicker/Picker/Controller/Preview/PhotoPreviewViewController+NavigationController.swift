@@ -23,7 +23,7 @@ extension PhotoPreviewViewController: UINavigationControllerDelegate {
         }else if operation == .pop {
             if fromVC is PhotoPreviewViewController && toVC is PhotoPickerViewController {
                 let cell = getCell(for: currentPreviewIndex)
-                cell?.scrollContentView.hiddenOtherSubview()
+                cell?.scrollContentView?.hiddenOtherSubview()
                 return PickerTransition.init(type: .pop)
             }
         }

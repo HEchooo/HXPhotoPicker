@@ -12,7 +12,7 @@ class PreviewPhotoViewCell: PhotoPreviewViewCell, PhotoPreviewContentViewDelete 
     override init(frame: CGRect) {
         super.init(frame: frame)
         scrollContentView = PhotoPreviewContentPhotoView()
-        scrollContentView.delegate = self
+        scrollContentView?.delegate = self
         initView()
     }
     required init?(coder: NSCoder) {

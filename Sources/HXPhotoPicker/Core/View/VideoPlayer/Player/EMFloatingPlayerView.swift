@@ -8,6 +8,7 @@
 import AVFoundation
 import Combine
 import UIKit
+import Kingfisher
 
 public class EMFloatingPlayerView: UIView {
     public weak var contentView: UIView? {
@@ -29,6 +30,7 @@ public class EMFloatingPlayerView: UIView {
             }
             self.floatingView = self.vedioView
             self.vedioView.delegate = self
+            self.vedioView.videoView.delegate = self
             self.vedioView.autoPlay = true
             self.vedioView.videoPlayType = .auto
 
@@ -42,6 +44,13 @@ public class EMFloatingPlayerView: UIView {
         }
     }
 
+    public var coverUrl: String? {
+        didSet {
+            guard let coverUrl else { return }
+            tmpCorverView.kf.setImage(with: URL(string: coverUrl))
+        }
+    }
+
     public var presentationSize: CGSize = .zero
     public var vedioView: PhotoPreviewContentVideoView = .init() {
         didSet {
@@ -51,6 +60,8 @@ public class EMFloatingPlayerView: UIView {
             updateLayout()
         }
     }
+
+    private var tmpCorverView = UIImageView()
 
 //    private lazy var player = EMPlayerManager.shared.buildPlayer()
 
@@ -78,6 +89,10 @@ public class EMFloatingPlayerView: UIView {
     override public init(frame: CGRect) {
         super.init(frame: CGRect(x: UIScreen.main.bounds.size.width - self.cwidth - 12.5, y: UIScreen.main.bounds.size.height * 0.3, width: self.cwidth, height: self.cheight))
         backgroundColor = .black
+        addSubview(self.tmpCorverView)
+        self.tmpCorverView.frame = bounds
+        self.tmpCorverView.contentMode = .scaleAspectFit
+        self.tmpCorverView.backgroundColor = .red
         addSubview(self.closeButton)
         self.closeButton.frame = CGRect(x: self.cwidth - 24, y: 0, width: 24, height: 24)
         self.bind()
@@ -241,6 +256,12 @@ class EMFloatingPlayerViewButton: UIView {
 extension EMFloatingPlayerView: PhotoPreviewContentViewDelete {
     public func contentView(updateContentSize contentView: PhotoPreviewContentViewProtocol) {
         updateLayout()
+    }
+}
+
+extension EMFloatingPlayerView: PhotoPreviewVideoViewDelegate {
+    public func videoView(readyToPlay: VideoPlayerView) {
+        self.tmpCorverView.isHidden = true
     }
 }
 

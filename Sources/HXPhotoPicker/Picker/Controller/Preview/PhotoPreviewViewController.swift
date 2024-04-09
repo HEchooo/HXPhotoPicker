@@ -131,7 +131,7 @@ public class PhotoPreviewViewController: PhotoBaseViewController {
             if cell.photoAsset.mediaSubType == .livePhoto ||
                 cell.photoAsset.mediaSubType == .localLivePhoto {
                 if #available(iOS 9.1, *) {
-                    cell.scrollContentView.livePhotoView.stopPlayback()
+                    cell.scrollContentView?.livePhotoView.stopPlayback()
                 }
             }
         }
@@ -219,6 +219,7 @@ public class PhotoPreviewViewController: PhotoBaseViewController {
     }
     
     deinit {
+        debugPrint("\(Self.self) is deinit")
         HXLog("PhotoPreviewViewController deinited 👍")
     }
     required init?(coder: NSCoder) {
@@ -442,10 +443,10 @@ extension PhotoPreviewViewController {
     func setCurrentCellImage(image: UIImage?) {
         guard let image = image,
               let cell = getCell(for: currentPreviewIndex),
-              !cell.scrollContentView.requestCompletion else {
+              !(cell.scrollContentView?.requestCompletion ?? false) else {
             return
         }
-        cell.scrollContentView.imageView.image = image
+        cell.scrollContentView?.imageView.image = image
     }
     func insert(at item: Int) {
         if item == currentPreviewIndex {

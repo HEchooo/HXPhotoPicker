@@ -36,7 +36,7 @@ public class PhotoPreviewContentPhotoView: UIView, PhotoPreviewContentViewProtoc
     private var isAnimatedCompletion: Bool = false
     private var imageTask: Any?
 
-    public var autoPlay: Bool = false
+    public var autoPlay: Bool = true
 
     var loadingView: ProgressHUD?
     
