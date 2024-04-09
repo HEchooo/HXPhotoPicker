@@ -134,6 +134,10 @@ public extension HX.ImageResource {
             public var videoPlay: String = "hx_picker_cell_video_play"
             /// 实况图片标签图标
             public var livePhoto: String = "hx_picker_livePhoto"
+            /// 播放视频图标
+            public var emvideoPlay: String = "em_cell_video_play"
+            /// 播放视频图标
+            public var emvideoPause: String = "em_cell_video_pause"
         }
     }
     #endif

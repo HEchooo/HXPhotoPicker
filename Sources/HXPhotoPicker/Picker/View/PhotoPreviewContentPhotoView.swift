@@ -13,32 +13,34 @@ import PhotosUI
 import Kingfisher
 #endif
 
-class PhotoPreviewContentPhotoView: UIView, PhotoPreviewContentViewProtocol {
-    
-    weak var delegate: PhotoPreviewContentViewDelete?
-    
-    var photoAsset: PhotoAsset! { didSet { updateContent() } }
-    
-    var imageView: ImageView!
-    var livePhotoView: PHLivePhotoView!
-    var livePhotoPlayType: PhotoPreviewViewController.PlayType = .once
-    var isLivePhotoAnimating: Bool = false
-    var videoView: PhotoPreviewVideoView!
-    var videoPlayType: PhotoPreviewViewController.PlayType = .normal
-    
-    var isPeek: Bool = false
-    var isBacking: Bool = false
-    
-    var requestID: PHImageRequestID?
-    var requestCompletion: Bool = false
-    var requestNetworkCompletion: Bool = false
+public class PhotoPreviewContentPhotoView: UIView, PhotoPreviewContentViewProtocol {
+
+    public weak var delegate: PhotoPreviewContentViewDelete?
+
+    public var photoAsset: PhotoAsset! { didSet { updateContent() } }
+
+    public var imageView: ImageView!
+    public var livePhotoView: PHLivePhotoView!
+    public var livePhotoPlayType: PhotoPreviewViewController.PlayType = .once
+    public var isLivePhotoAnimating: Bool = false
+    public var videoView: PhotoPreviewVideoView!
+    public var videoPlayType: PhotoPreviewViewController.PlayType = .normal
+
+    public var isPeek: Bool = false
+    public var isBacking: Bool = false
+
+    public var requestID: PHImageRequestID?
+    public var requestCompletion: Bool = false
+    public var requestNetworkCompletion: Bool = false
     private var loadAssetLocalIdentifier: String?
     private var isAnimatedCompletion: Bool = false
     private var imageTask: Any?
-    
+
+    public var autoPlay: Bool = false
+
     var loadingView: ProgressHUD?
     
-    override init(frame: CGRect) {
+    public override init(frame: CGRect) {
         super.init(frame: frame)
         initViews()
     }
@@ -70,7 +72,8 @@ class PhotoPreviewContentPhotoView: UIView, PhotoPreviewContentViewProtocol {
     }
     
     func requestNetwork() { 
-        requestNetworkCompletion = false
+        guard !requestNetworkCompletion else { return }
+//        requestNetworkCompletion = false
         requestNetworkImage()
         #if canImport(Kingfisher)
         photoAsset.loadNetworkImageHandler = { [weak self] in
@@ -90,7 +93,7 @@ class PhotoPreviewContentPhotoView: UIView, PhotoPreviewContentViewProtocol {
         }
     }
     
-    func requestPreviewAsset() {
+    public func requestPreviewAsset() {
         switch photoAsset.mediaSubType {
         case .localImage, .networkImage:
             return
@@ -145,7 +148,7 @@ class PhotoPreviewContentPhotoView: UIView, PhotoPreviewContentViewProtocol {
         #endif
     }
     
-    func cancelRequest() {
+    public func cancelRequest() {
         guard let photoAsset = photoAsset else { return }
         cancelImageTask()
         if !isPeek {
@@ -173,23 +176,23 @@ class PhotoPreviewContentPhotoView: UIView, PhotoPreviewContentViewProtocol {
         requestCompletion = false
     }
     
-    func startAnimated() {
+    public func startAnimated() {
         if photoAsset.mediaSubType.isGif {
             imageView.startAnimatedImage()
         }
     }
     
-    func stopAnimated() {
+    public func stopAnimated() {
         if photoAsset.mediaSubType.isGif {
             imageView.stopAnimatedImage()
         }
     }
     
-    func stopVideo() { }
-    
-    func stopLivePhoto() { }
-    
-    var hudSuperview: UIView? {
+    public func stopVideo() { }
+
+    public func stopLivePhoto() { }
+
+    public var hudSuperview: UIView? {
         if !isPeek {
             if let view = superview?.superview {
                 return view
@@ -199,6 +202,7 @@ class PhotoPreviewContentPhotoView: UIView, PhotoPreviewContentViewProtocol {
     }
     
     func showLoadingView(text: String?) {
+        guard !autoPlay else { return }
         loadingView = ProgressHUD.showProgress(
             addedTo: hudSuperview,
             text: text?.localized,
@@ -206,12 +210,12 @@ class PhotoPreviewContentPhotoView: UIView, PhotoPreviewContentViewProtocol {
         )
     }
     
-    func showOtherSubview() {
+    public func showOtherSubview() {
         if !requestNetworkCompletion {
             loadingView?.isHidden = false
         }
     }
-    func hiddenOtherSubview() {
+    public func hiddenOtherSubview() {
         if requestNetworkCompletion {
             loadingView = nil
             ProgressHUD.hide(forView: hudSuperview, animated: false)
@@ -224,7 +228,7 @@ class PhotoPreviewContentPhotoView: UIView, PhotoPreviewContentViewProtocol {
         updateContentSize(image.size)
     }
     
-    func updateContentSize(_ size: CGSize) {
+    public func updateContentSize(_ size: CGSize) {
         if height == 0 || width == 0 {
             delegate?.contentView(updateContentSize: self)
             return
@@ -235,7 +239,7 @@ class PhotoPreviewContentPhotoView: UIView, PhotoPreviewContentViewProtocol {
         }
     }
     
-    override func layoutSubviews() {
+    public override func layoutSubviews() {
         super.layoutSubviews()
         imageView.frame = bounds
     }

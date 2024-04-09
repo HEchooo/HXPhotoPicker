@@ -8,26 +8,26 @@
 import UIKit
 import AVFoundation
 
-class VideoPlayerView: UIView {
-    
-    override class var layerClass: AnyClass {
+public class VideoPlayerView: UIView {
+
+    public override class var layerClass: AnyClass {
         return AVPlayerLayer.self
     }
     
-    var player: AVPlayer!
-    
-    var playerLayer: AVPlayerLayer {
+    public var player: AVPlayer!
+
+    public var playerLayer: AVPlayerLayer {
         return layer as! AVPlayerLayer
     }
     
-    var avAsset: AVAsset?
-    
-    init() {
+    public var avAsset: AVAsset?
+
+    public init() {
         player = AVPlayer()
         super.init(frame: .zero)
     }
     
-    required init?(coder: NSCoder) {
+    public required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
 }

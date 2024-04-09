@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import AVFoundation
 
 open class PreviewVideoControlViewCell: PreviewVideoViewCell, VideoPlaySliderViewDelegate {
     
@@ -15,6 +16,10 @@ open class PreviewVideoControlViewCell: PreviewVideoViewCell, VideoPlaySliderVie
     
     override init(frame: CGRect) {
         super.init(frame: frame)
+    }
+
+    public override func config(videoView: PhotoPreviewContentVideoView? = nil) {
+        super.config(videoView: videoView)
         maskBackgroundView = UIView()
         maskBackgroundView.alpha = 0
         maskLayer = PhotoTools.getGradientShadowLayer(false)
@@ -24,8 +29,16 @@ open class PreviewVideoControlViewCell: PreviewVideoViewCell, VideoPlaySliderVie
         sliderView.delegate = self
         sliderView.alpha = 0
         contentView.addSubview(sliderView)
+        updateScrollContentView()
     }
-    
+
+    private func updateScrollContentView() {
+        guard let currentItem  = scrollContentView.videoView.player.currentItem else { return }
+        videoView(scrollContentView.videoView, readyToPlay: CGFloat(CMTimeGetSeconds(currentItem.duration)))
+        videoView(scrollContentView.videoView, isPlaybackLikelyToKeepUp: currentItem.isPlaybackLikelyToKeepUp)
+    }
+
+
     public override func videoReadyToPlay(duration: CGFloat) {
         sliderView.videoDuration = duration
     }

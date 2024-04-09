@@ -5,17 +5,17 @@
 //  Created by Slience on 2021/8/4.
 //
 
-import UIKit
 import AVFoundation
+import UIKit
 
 public protocol PhotoPeekViewControllerDelegate: AnyObject {
     func photoPeekViewController(requestSucceed photoPeekViewController: PhotoPeekViewController)
     func photoPeekViewController(requestFailed photoPeekViewController: PhotoPeekViewController)
 }
 
-public extension PhotoPeekViewControllerDelegate {
-    func photoPeekViewController(requestSucceed photoPeekViewController: PhotoPeekViewController) { }
-    func photoPeekViewController(requestFailed photoPeekViewController: PhotoPeekViewController) { }
+extension PhotoPeekViewControllerDelegate {
+    public func photoPeekViewController(requestSucceed photoPeekViewController: PhotoPeekViewController) {}
+    public func photoPeekViewController(requestFailed photoPeekViewController: PhotoPeekViewController) {}
 }
 
 public class PhotoPeekViewController: UIViewController {
@@ -41,7 +41,7 @@ public class PhotoPeekViewController: UIViewController {
         super.init(nibName: nil, bundle: nil)
     }
     
-    public override func viewDidLoad() {
+    override public func viewDidLoad() {
         super.viewDidLoad()
         if photoAsset != nil {
             if photoAsset.mediaType == .photo {
@@ -76,7 +76,7 @@ public class PhotoPeekViewController: UIViewController {
         #endif
     }
     
-    public override func viewDidAppear(_ animated: Bool) {
+    override public func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         if photoAsset != nil {
             contentView.requestPreviewAsset()
@@ -88,7 +88,7 @@ public class PhotoPeekViewController: UIViewController {
         #endif
     }
     
-    public override func viewWillDisappear(_ animated: Bool) {
+    override public func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         if photoAsset != nil {
             contentView.cancelRequest()
@@ -100,7 +100,7 @@ public class PhotoPeekViewController: UIViewController {
         #endif
     }
     
-    public override func viewDidLayoutSubviews() {
+    override public func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
         if photoAsset != nil {
             contentView.frame = view.bounds
@@ -120,19 +120,22 @@ public class PhotoPeekViewController: UIViewController {
     }
 }
 extension PhotoPeekViewController: PhotoPreviewContentViewDelete {
-    func contentView(requestSucceed contentView: PhotoPreviewContentViewProtocol) {
+    public func contentView(requestSucceed contentView: PhotoPreviewContentViewProtocol) {
         delegate?.photoPeekViewController(requestSucceed: self)
     }
-    func contentView(requestFailed contentView: PhotoPreviewContentViewProtocol) {
+
+    public func contentView(requestFailed contentView: PhotoPreviewContentViewProtocol) {
         delegate?.photoPeekViewController(requestFailed: self)
     }
 }
+
 extension PhotoPeekViewController: PhotoPreviewVideoViewDelegate {
-    func videoView(resetPlay videoView: VideoPlayerView) {
+    public func videoView(resetPlay videoView: VideoPlayerView) {
         progress = 0
         setupProgressView()
     }
-    func videoView(_ videoView: VideoPlayerView, didChangedPlayerTime duration: CGFloat) {
+
+    public func videoView(_ videoView: VideoPlayerView, didChangedPlayerTime duration: CGFloat) {
         photoAsset.playerTime = duration
         progress = duration / CGFloat(photoAsset.videoDuration)
         setupProgressView()

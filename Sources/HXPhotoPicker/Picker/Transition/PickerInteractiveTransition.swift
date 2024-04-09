@@ -151,6 +151,7 @@ class PickerInteractiveTransition: UIPercentDrivenInteractiveTransition, UIGestu
         return (true, isTracking)
     }
     func beginInteration(panGR: UIPanGestureRecognizer) {
+        print("beginInteration")
         if canInteration {
             return
         }
@@ -266,6 +267,7 @@ class PickerInteractiveTransition: UIPercentDrivenInteractiveTransition, UIGestu
         }
     }
     func endInteration(panGR: UIPanGestureRecognizer) {
+        print("endInteration")
         canTransition = false
         if !canInteration {
             return
@@ -297,6 +299,7 @@ class PickerInteractiveTransition: UIPercentDrivenInteractiveTransition, UIGestu
         slidingGap = .zero
     }
     func interPercentDidCancel() {
+        print("interPercentDidCancel")
         if let previewViewController = previewViewController, let previewView = previewView {
             panGestureRecognizer.isEnabled = false
             previewViewController.navigationController?.view.isUserInteractionEnabled = false
@@ -373,10 +376,14 @@ class PickerInteractiveTransition: UIPercentDrivenInteractiveTransition, UIGestu
         }
     }
     func interPercentDidFinish() {
+        print("interPercentDidFinish")
         if let previewViewController = previewViewController,
             let previewView = previewView {
             panGestureRecognizer.isEnabled = false
             var toRect: CGRect = .zero
+            print(toView)
+            print(previewView)
+            print(previewViewController)
             if let toView = toView {
                 if let toSuperView = toView.superview {
                     toRect = toSuperView.convert(toView.frame, to: transitionContext?.containerView)
@@ -641,6 +648,7 @@ class PickerInteractiveTransition: UIPercentDrivenInteractiveTransition, UIGestu
         beganInterPercent = true
     }
     func dismissTransition(_ transitionContext: UIViewControllerContextTransitioning) {
+        print("dismissTransition")
         if !canTransition {
             canInteration = false
             beganInterPercent = false

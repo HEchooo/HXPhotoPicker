@@ -1,8 +1,8 @@
 //
-//  PhotoBrowserTransition.swift
-//  EchoProduct
+//  PhotoBrowserVedioTransition.swift
+//  HXPhotoPicker
 //
-//  Created by liukun on 2024/3/9.
+//  Created by liukun on 2024/4/8.
 //
 
 import Photos
@@ -11,7 +11,7 @@ import UIKit
 import Kingfisher
 #endif
 
-public enum PhotoBrowserTransitionType {
+public enum PhotoBrowserVedioTransitionType {
     case present
     case dismiss
 
@@ -25,10 +25,10 @@ public enum PhotoBrowserTransitionType {
     }
 }
 
-class PhotoBrowserTransition: NSObject, UIViewControllerAnimatedTransitioning {
+class PhotoBrowserVedioTransition: NSObject, UIViewControllerAnimatedTransitioning {
     private let type: PhotoBrowserTransitionType
     private var requestID: PHImageRequestID?
-    private var pushImageView: UIImageView!
+    private var pushImageView: UIView!
 
     init(type: PhotoBrowserTransitionType) {
         self.type = type
@@ -69,6 +69,7 @@ class PhotoBrowserTransition: NSObject, UIViewControllerAnimatedTransitioning {
 
         let containerView = transitionContext.containerView
         let contentView = UIView()
+        contentView.backgroundColor = .purple
 
         var pickerController: PhotoPickerController
         if type == .present {
@@ -129,7 +130,7 @@ class PhotoBrowserTransition: NSObject, UIViewControllerAnimatedTransitioning {
                 pickerController,
                 presentPreviewImageForIndexAt: currentPreviewIndex
             ) {
-                pushImageView.image = image
+                (pushImageView as? UIImageView)?.image = image
             }
             var photoAsset: PhotoAsset?
             if pickerController.previewType == .picker {
@@ -149,9 +150,9 @@ class PhotoBrowserTransition: NSObject, UIViewControllerAnimatedTransitioning {
                 #endif
                 if let phAsset = photoAsset.phAsset, reqeustAsset {
                     requestAssetImage(for: phAsset, isGIF: photoAsset.isGifAsset, isHEIC: photoAsset.photoFormat == "heic")
-                } else if pushImageView.image == nil || photoAsset.isLocalAsset {
+                } else if (pushImageView as? UIImageView)?.image == nil || photoAsset.isLocalAsset {
                     if let image = photoAsset.originalImage {
-                        pushImageView.image = image
+                        (pushImageView as? UIImageView)?.image = image
                     }
                 }
                 #if canImport(Kingfisher)
@@ -167,7 +168,7 @@ class PhotoBrowserTransition: NSObject, UIViewControllerAnimatedTransitioning {
                             switch $0 {
                             case .success(let value):
                                 if let image = value.image, self.pushImageView.superview != nil {
-                                    self.pushImageView.setImage(image, duration: 0.4, animated: true)
+                                    (self.pushImageView as? UIImageView)?.setImage(image, duration: 0.4, animated: true)
                                 }
                             default:
                                 break
@@ -187,7 +188,7 @@ class PhotoBrowserTransition: NSObject, UIViewControllerAnimatedTransitioning {
                                     if let image = value.image,
                                        self.pushImageView.superview != nil
                                     {
-                                        self.pushImageView.setImage(image, duration: 0.4, animated: true)
+                                        (self.pushImageView as? UIImageView)?.setImage(image, duration: 0.4, animated: true)
                                     }
                                 default:
                                     break
@@ -327,7 +328,7 @@ class PhotoBrowserTransition: NSObject, UIViewControllerAnimatedTransitioning {
                     previewPresentComplete: currentPreviewIndex
                 )
                 previewViewController?.view.backgroundColor = backgroundColor.withAlphaComponent(1)
-                previewViewController?.setCurrentCellImage(image: self.pushImageView.image)
+                previewViewController?.setCurrentCellImage(image: (self.pushImageView as? UIImageView)?.image)
                 previewViewController?.collectionView.isHidden = false
                 previewViewController?.updateColors()
                 pickerController.configBackgroundColor()
@@ -344,7 +345,7 @@ class PhotoBrowserTransition: NSObject, UIViewControllerAnimatedTransitioning {
                     transitionContext.completeTransition(true)
                 } else {
                     UIView.animate(withDuration: 0.2, delay: 0, options: [.allowUserInteraction]) {
-                        fromView.alpha = 0
+                        fromView.alpha = (fromView == self.pushImageView) ? 0 : 1
                     } completion: { _ in
                         contentView.removeFromSuperview()
                         transitionContext.completeTransition(true)
@@ -366,7 +367,7 @@ class PhotoBrowserTransition: NSObject, UIViewControllerAnimatedTransitioning {
             guard let image else { return }
             DispatchQueue.main.async {
                 if self.pushImageView.superview != nil {
-                    self.pushImageView.image = image
+                    (self.pushImageView as? UIImageView)?.image = image
                 }
             }
             if AssetManager.assetDownloadFinined(for: info) || AssetManager.assetCancelDownload(for: info) {

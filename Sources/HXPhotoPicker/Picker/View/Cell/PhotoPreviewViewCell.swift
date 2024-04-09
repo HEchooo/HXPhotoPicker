@@ -63,11 +63,13 @@ open class PhotoPreviewViewCell: UICollectionViewCell, UIScrollViewDelegate {
         }
         let singleTap = UITapGestureRecognizer.init(target: self, action: #selector(singleTap(tap:)))
         scrollView.addGestureRecognizer(singleTap)
-        let doubleTap = UITapGestureRecognizer.init(target: self, action: #selector(doubleTap(tap:)))
-        doubleTap.numberOfTapsRequired = 2
-        doubleTap.numberOfTouchesRequired = 1
-        singleTap.require(toFail: doubleTap)
-        scrollView.addGestureRecognizer(doubleTap)
+        if !(self is PhotoBrowserVideoCell) {
+            let doubleTap = UITapGestureRecognizer.init(target: self, action: #selector(doubleTap(tap:)))
+            doubleTap.numberOfTapsRequired = 2
+            doubleTap.numberOfTouchesRequired = 1
+            singleTap.require(toFail: doubleTap)
+            scrollView.addGestureRecognizer(doubleTap)
+        }
         scrollView.addSubview(scrollContentView)
         let longPress = UILongPressGestureRecognizer(target: self, action: #selector(longPressClick(longPress:)))
         scrollView.addGestureRecognizer(longPress)

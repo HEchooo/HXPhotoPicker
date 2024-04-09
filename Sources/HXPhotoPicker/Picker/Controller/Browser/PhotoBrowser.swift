@@ -6,9 +6,9 @@
 //
 
 import UIKit
+import AVFoundation
 
 open class PhotoBrowser: PhotoPickerController {
-    
     public var collectionView: UICollectionView {
         previewViewController!.collectionView
     }
@@ -26,7 +26,7 @@ open class PhotoBrowser: PhotoPickerController {
                 return pages
             }
             return 0
-        }else {
+        } else {
             return previewAssets.count
         }
     }
@@ -35,7 +35,7 @@ open class PhotoBrowser: PhotoPickerController {
     public var currentAsset: PhotoAsset? {
         if previewAssets.isEmpty {
             return assetForIndex?(pageIndex)
-        }else {
+        } else {
             if pageIndex >= previewAssets.count || pageIndex < 0 {
                 return nil
             }
@@ -98,7 +98,9 @@ open class PhotoBrowser: PhotoPickerController {
     public var viewDidAppear: ViewLifeCycleHandler?
     public var viewWillDisappear: ViewLifeCycleHandler?
     public var viewDidDisappear: ViewLifeCycleHandler?
-    
+
+    public var mediaType: EMMediaType = .Image
+
     /// 初始化浏览器
     /// - Parameters:
     ///   - config: 浏览器配置
@@ -146,6 +148,7 @@ open class PhotoBrowser: PhotoPickerController {
             pageIndex: pageIndex,
             transitionalImage: transitionalImage
         )
+        browser.mediaType = config.mediaType
         browser.transitionAnimator = transitionAnimator
         browser.transitionCompletion = transitionCompletion
         browser.numberOfPages = numberOfPages
@@ -188,6 +191,7 @@ open class PhotoBrowser: PhotoPickerController {
             assets: previewAssets,
             transitionalImage: transitionalImage
         )
+        browser.mediaType = config.mediaType
         browser.transitionAnimator = transitionHandler
         browser.transitionCompletion = transitionCompletion
         browser.deleteAssetHandler = deleteAssetHandler
@@ -200,6 +204,7 @@ open class PhotoBrowser: PhotoPickerController {
     public func insertIndex(_ index: Int) {
         previewViewController?.insert(at: index)
     }
+
     public func insertAsset(_ asset: PhotoAsset, at index: Int) {
         previewViewController?.insert(asset, at: index)
     }
@@ -218,6 +223,7 @@ open class PhotoBrowser: PhotoPickerController {
     public func reloadData() {
         previewViewController?.collectionView.reloadData()
     }
+
     public func reloadData(for index: Int) {
         previewViewController?.reloadCell(for: index)
     }
@@ -230,7 +236,7 @@ open class PhotoBrowser: PhotoPickerController {
         let vc: UIViewController?
         if let fromVC = fromVC {
             vc = fromVC
-        }else {
+        } else {
             vc = UIViewController.topViewController
         }
         vc?.present(
@@ -331,14 +337,14 @@ open class PhotoBrowser: PhotoPickerController {
     
     private var isShowDelete: Bool = false
     
-    public override func viewDidLoad() {
+    override public func viewDidLoad() {
         super.viewDidLoad()
         initViews()
         
         if previewAssets.isEmpty {
             assert(
                 numberOfPages != nil &&
-                assetForIndex != nil,
+                    assetForIndex != nil,
                 "previewAssets为空时，numberOfPages、assetForIndex 必须实现"
             )
         }
@@ -361,7 +367,7 @@ open class PhotoBrowser: PhotoPickerController {
             pageIndicator.reloadData(numberOfPages: pageCount, pageIndex: currentPreviewIndex)
             if pageIndicatorType == .titleView {
                 previewViewController?.navigationItem.titleView = pageIndicator
-            }else if pageIndicatorType == .bottom {
+            } else if pageIndicatorType == .bottom {
                 if config.modalPresentationStyle == .custom {
                     pageIndicator.alpha = 0
                 }
@@ -409,7 +415,7 @@ open class PhotoBrowser: PhotoPickerController {
         )
     }
     
-    open override func viewWillTransition(
+    override open func viewWillTransition(
         to size: CGSize,
         with coordinator: UIViewControllerTransitionCoordinator
     ) {
@@ -426,7 +432,7 @@ open class PhotoBrowser: PhotoPickerController {
         }
     }
     
-    public override func viewDidLayoutSubviews() {
+    override public func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
         let imageHeight = navigationBar.frame.maxY + 20
         gradualShadowImageView.frame = CGRect(origin: .zero, size: CGSize(width: view.width, height: imageHeight))
@@ -436,7 +442,8 @@ open class PhotoBrowser: PhotoPickerController {
         }
     }
     
-    required public init?(coder aDecoder: NSCoder) {
+    @available(*, unavailable)
+    public required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
     
@@ -445,28 +452,31 @@ open class PhotoBrowser: PhotoPickerController {
     }
 }
 
-extension PhotoBrowser {
-    
+public extension PhotoBrowser {
     /// Cell刷新显示，`func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath ) -> UICollectionViewCell`调用时触发
     /// (刷新对应的Cell，cell对应的index，当前界面显示的index)
-    public typealias CellReloadContext = (PhotoPreviewViewCell, Int, Int) -> Void
+    typealias CellReloadContext = (PhotoPreviewViewCell, Int, Int) -> Void
     /// 当内部需要用到 PhotoAsset 对象时触发
     /// (对应的index) -> index对应的 PhotoAsset 对象
-    public typealias RequiredAsset = (Int) -> PhotoAsset?
+    typealias RequiredAsset = (Int) -> PhotoAsset?
     /// 获取总页数 -> 总页数
-    public typealias NumberOfPagesHandler = () -> Int
+    typealias NumberOfPagesHandler = () -> Int
     /// (当前界面显示的Cell，当前界面显示的index)
-    public typealias ContextUpdate = (PhotoPreviewViewCell, Int, PhotoBrowser) -> Void
+    typealias ContextUpdate = (PhotoPreviewViewCell, Int, PhotoBrowser) -> Void
     /// (当前转场动画对应的index) -> 动画开始/结束位置对应的View，用于获取坐标
-    public typealias TransitionAnimator = (Int) -> UIView?
-    public typealias TransitionCompletion = (Int) -> Void
+    typealias TransitionAnimator = (Int) -> UIView?
+    typealias TransitionCompletion = (PhotoBrowserTransitionType, Int) -> Void
     /// (当前界面显示的index，对应的 PhotoAsset 对象，照片浏览器对象)
-    public typealias AssetHandler = (Int, PhotoAsset, PhotoBrowser) -> Void
+    typealias AssetHandler = (Int, PhotoAsset, PhotoBrowser) -> Void
     /// (当前界面显示的index，照片浏览器对象)
-    public typealias ViewLifeCycleHandler = (PhotoBrowser) -> Void
-    
-    public struct Configuration {
-        
+    typealias ViewLifeCycleHandler = (PhotoBrowser) -> Void
+
+    enum EMMediaType {
+        case Image
+        case Vedio
+    }
+
+    struct Configuration {
         /// If the built-in language is not enough, you can add a custom language text
         /// PhotoManager.shared.customLanguages - custom language array
         /// PhotoManager.shared.fixedCustomLanguage - If there are multiple custom languages, one can be fixed to display
@@ -493,11 +503,13 @@ extension PhotoBrowser {
         public var hideSourceView: Bool = true
         /// 跳转样式
         public var modalPresentationStyle: UIModalPresentationStyle = .custom
-        
-        public init() { }
+
+        public var mediaType: EMMediaType = .Image
+
+        public init() {}
     }
     
-    public enum PageIndicatorType {
+    enum PageIndicatorType {
         case titleView
         case bottom
     }
@@ -544,13 +556,13 @@ extension PhotoBrowser: PhotoPickerControllerDelegate {
     ) {
         if photoAsset.mediaType == .photo {
             pickerController.dismiss(animated: true, completion: nil)
-        }else {
+        } else {
             didHidden = !didHidden
             UIView.animate(withDuration: 0.25) {
-                self.pageIndicator?.alpha =  self.didHidden ? 0 : 1
+                self.pageIndicator?.alpha = self.didHidden ? 0 : 1
                 self.gradualShadowImageView.alpha = self.didHidden ? 0 : 1
             } completion: { _ in
-                self.pageIndicator?.alpha =  self.didHidden ? 0 : 1
+                self.pageIndicator?.alpha = self.didHidden ? 0 : 1
                 self.gradualShadowImageView.alpha = self.didHidden ? 0 : 1
             }
         }
@@ -614,6 +626,7 @@ extension PhotoBrowser: PhotoPickerControllerDelegate {
     }
     
     // MARK: 单独预览时的自定义转场动画
+
     /// present预览时展示的image
     /// - Parameters:
     ///   - pickerController: 对应的 PhotoPickerController
@@ -678,16 +691,15 @@ extension PhotoBrowser: PhotoPickerControllerDelegate {
     }
     
     public func pickerController(_ pickerController: PhotoPickerController, previewPresentComplete atIndex: Int) {
-        transitionCompletion?(atIndex)
+        transitionCompletion?(.present, atIndex)
     }
     
     public func pickerController(_ pickerController: PhotoPickerController, previewDismissComplete atIndex: Int) {
-        transitionCompletion?(atIndex)
+        transitionCompletion?(.dismiss, atIndex)
     }
 }
 
 public protocol PhotoBrowserPageIndicator: UIView {
-    
     var pageControlChanged: ((Int) -> Void)? { get set }
     
     /// 刷新指示器
@@ -699,15 +711,13 @@ public protocol PhotoBrowserPageIndicator: UIView {
     /// 当前页面发生改变
     /// - Parameter pageIndex: 当前显示的页面下标
     func didChanged(pageIndex: Int)
-    
 }
 
 public extension PhotoBrowserPageIndicator {
-    var pageControlChanged: ((Int) -> Void)? { get { nil } set { } }
+    var pageControlChanged: ((Int) -> Void)? { get { nil } set {} }
 }
 
 open class PhotoBrowserDefaultPageIndicator: UIView, PhotoBrowserPageIndicator {
-    
     public var titleLabel: UILabel!
     
     public var numberOfPages: Int = 0
@@ -726,7 +736,8 @@ open class PhotoBrowserDefaultPageIndicator: UIView, PhotoBrowserPageIndicator {
         addSubview(titleLabel)
     }
     
-    required public init?(coder: NSCoder) {
+    @available(*, unavailable)
+    public required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
     
@@ -739,14 +750,13 @@ open class PhotoBrowserDefaultPageIndicator: UIView, PhotoBrowserPageIndicator {
         self.pageIndex = pageIndex
     }
     
-    open override func layoutSubviews() {
+    override open func layoutSubviews() {
         super.layoutSubviews()
         titleLabel.frame = bounds
     }
 }
 
 open class PhotoBrowserPageControlIndicator: UIView, PhotoBrowserPageIndicator {
-    
     public var maskLayer: CAGradientLayer!
     
     public var pageControl: UIPageControl!
@@ -767,7 +777,8 @@ open class PhotoBrowserPageControlIndicator: UIView, PhotoBrowserPageIndicator {
         pageControlChanged?(pageControl.currentPage)
     }
     
-    required public init?(coder: NSCoder) {
+    @available(*, unavailable)
+    public required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
     
@@ -780,7 +791,7 @@ open class PhotoBrowserPageControlIndicator: UIView, PhotoBrowserPageIndicator {
         pageControl.currentPage = pageIndex
     }
     
-    open override func layoutSubviews() {
+    override open func layoutSubviews() {
         super.layoutSubviews()
         pageControl.frame = bounds
         maskLayer.frame = CGRect(
@@ -793,9 +804,17 @@ open class PhotoBrowserPageControlIndicator: UIView, PhotoBrowserPageIndicator {
 }
 
 open class PhotoBrowserVideoCell: PreviewVideoControlViewCell {
-    
     override init(frame: CGRect) {
         super.init(frame: frame)
+    }
+    
+    @available(*, unavailable)
+    public required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+
+    public override func config(videoView: PhotoPreviewContentVideoView? = nil) {
+        super.config(videoView: videoView)
         maskLayer.colors = [
             UIColor.black.withAlphaComponent(0).cgColor,
             UIColor.black.withAlphaComponent(0.1).cgColor,
@@ -806,12 +825,8 @@ open class PhotoBrowserVideoCell: PreviewVideoControlViewCell {
         ]
         maskLayer.locations = [0.1, 0.2, 0.4, 0.5, 0.7, 1]
     }
-    
-    required public init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-    
-    public override func layoutSubviews() {
+
+    override public func layoutSubviews() {
         super.layoutSubviews()
         sliderView.frame = CGRect(
             x: 0,
@@ -824,10 +839,8 @@ open class PhotoBrowserVideoCell: PreviewVideoControlViewCell {
     }
 }
 
-
-
-extension PhotoBrowser {
-    public override func animationController(
+public extension PhotoBrowser {
+    override func animationController(
         forPresented presented: UIViewController,
         presenting: UIViewController,
         source: UIViewController
@@ -835,19 +848,29 @@ extension PhotoBrowser {
         if !config.allowCustomTransitionAnimation {
             return nil
         }
-        return PhotoBrowserTransition(type: .present)
+        switch mediaType {
+        case .Image:
+            return PhotoBrowserTransition(type: .present)
+        case .Vedio:
+            return PhotoBrowserVedioTransition(type: .present)
+        }
     }
 
-    public override func animationController(
+    override func animationController(
         forDismissed dismissed: UIViewController
     ) -> UIViewControllerAnimatedTransitioning? {
         if !config.allowCustomTransitionAnimation {
             return nil
         }
-        return PhotoBrowserTransition(type: .dismiss)
+        switch mediaType {
+        case .Image:
+            return PhotoBrowserTransition(type: .dismiss)
+        case .Vedio:
+            return PhotoBrowserVedioTransition(type: .dismiss)
+        }
     }
 
-    public override func interactionControllerForDismissal(
+    override func interactionControllerForDismissal(
         using animator: UIViewControllerAnimatedTransitioning
     ) -> UIViewControllerInteractiveTransitioning? {
         if let canInteration = interactiveTransition?.canInteration, canInteration {

@@ -47,6 +47,7 @@ extension PhotoPreviewViewController: UICollectionViewDataSource {
                 for: indexPath
             ) as! PreviewVideoViewCell
             let videoCell = cell as! PreviewVideoViewCell
+            videoCell.config(videoView: photoAsset.vedioView)
             videoCell.videoPlayType = config.videoPlayType
             videoCell.statusBarShouldBeHidden = statusBarShouldBeHidden
         }
@@ -166,13 +167,13 @@ extension PhotoPreviewViewController: PhotoPreviewViewCellDelegate {
         guard let navigationController = navigationController else {
             return
         }
-        let isHidden = navigationController.navigationBar.isHidden
-        statusBarShouldBeHidden = !isHidden
+//        let isHidden = navigationController.navigationBar.isHidden
+        statusBarShouldBeHidden = !statusBarShouldBeHidden
         if self.modalPresentationStyle == .fullScreen ||
             pickerController.splitViewController?.modalPresentationStyle == .fullScreen {
             navigationController.setNeedsStatusBarAppearanceUpdate()
         }
-        navigationController.setNavigationBarHidden(statusBarShouldBeHidden, animated: true)
+//        navigationController.setNavigationBarHidden(statusBarShouldBeHidden, animated: true)
         let currentCell = getCell(for: currentPreviewIndex)
         currentCell?.statusBarShouldBeHidden = statusBarShouldBeHidden
         let videoCell = currentCell as? PreviewVideoViewCell

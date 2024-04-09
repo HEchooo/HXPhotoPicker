@@ -63,7 +63,7 @@ public final class PhotoManager: NSObject {
     #endif
     
     /// 加载网络视频方式
-    public var loadNetworkVideoMode: PhotoAsset.LoadNetworkVideoMode = .download
+    public var loadNetworkVideoMode: PhotoAsset.LoadNetworkVideoMode = .play
     
     var isCacheCameraAlbum: Bool = false {
         didSet {

@@ -23,7 +23,8 @@ extension String: HXPickerCompatibleValue {
     }
     
     var image: UIImage? { UIImage.image(for: self) }
-    
+    var eimage: UIImage? { UIImage.pimage(for: self) }
+
     static var imageResource: HX.ImageResource {
         .shared
     }

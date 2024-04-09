@@ -11,7 +11,7 @@ import UIKit
 import Kingfisher
 #endif
 
-final class ImageView: UIView {
+public final class ImageView: UIView {
     var imageView: UIImageView!
     var image: UIImage? {
         get {
@@ -46,7 +46,7 @@ final class ImageView: UIView {
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-    override func layoutSubviews() {
+    public override func layoutSubviews() {
         super.layoutSubviews()
         imageView.frame = bounds
     }

@@ -34,7 +34,17 @@ extension UIImage {
         }
         return image
     }
-    
+
+    static func pimage(for named: String?) -> UIImage? {
+        guard let c = NSClassFromString("EchoProduct.EMProductViewController") else { return nil }
+        let bundle = Bundle(for: c)
+        if let named, let bundleUrl = bundle.url(forResource: "EchoProduct", withExtension: "bundle") {
+            let b = Bundle(url: bundleUrl)
+            return UIImage(named: named, in: b , with: nil)
+        }
+        return nil
+    }
+
     static var imageResource: HX.ImageResource {
         HX.ImageResource.shared
     }
