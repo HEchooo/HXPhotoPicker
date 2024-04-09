@@ -30,6 +30,7 @@ public class EMFloatingPlayerView: UIView {
             self.floatingView = self.vedioView
             self.vedioView.delegate = self
             self.vedioView.autoPlay = true
+            self.vedioView.videoPlayType = .auto
 
             let asset: NetworkVideoAsset = .init(videoURL: URL)
             let passet: PhotoAsset = .init(networkVideoAsset: asset)

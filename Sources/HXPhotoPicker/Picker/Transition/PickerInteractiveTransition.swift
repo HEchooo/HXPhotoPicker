@@ -359,7 +359,7 @@ class PickerInteractiveTransition: UIPercentDrivenInteractiveTransition, UIGestu
                 previewView.layer.anchorPoint = CGPoint(x: 0.5, y: 0.5)
                 previewView.frame = self.beforePreviewFrame
                 previewViewController.collectionView.addSubview(previewView)
-                previewView.scrollContentView.showOtherSubview()
+//                previewView.scrollContentView.showOtherSubview()
                 self.backgroundView.removeFromSuperview()
                 self.previewView = nil
                 self.toView = nil
@@ -376,14 +376,10 @@ class PickerInteractiveTransition: UIPercentDrivenInteractiveTransition, UIGestu
         }
     }
     func interPercentDidFinish() {
-        print("interPercentDidFinish")
         if let previewViewController = previewViewController,
             let previewView = previewView {
             panGestureRecognizer.isEnabled = false
             var toRect: CGRect = .zero
-            print(toView)
-            print(previewView)
-            print(previewViewController)
             if let toView = toView {
                 if let toSuperView = toView.superview {
                     toRect = toSuperView.convert(toView.frame, to: transitionContext?.containerView)

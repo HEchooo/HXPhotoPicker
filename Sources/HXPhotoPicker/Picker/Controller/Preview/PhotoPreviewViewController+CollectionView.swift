@@ -167,37 +167,37 @@ extension PhotoPreviewViewController: PhotoPreviewViewCellDelegate {
         guard let navigationController = navigationController else {
             return
         }
-//        let isHidden = navigationController.navigationBar.isHidden
-        statusBarShouldBeHidden = !statusBarShouldBeHidden
+        let isHidden = navigationController.navigationBar.isHidden
+        statusBarShouldBeHidden = !isHidden
         if self.modalPresentationStyle == .fullScreen ||
             pickerController.splitViewController?.modalPresentationStyle == .fullScreen {
             navigationController.setNeedsStatusBarAppearanceUpdate()
         }
-//        navigationController.setNavigationBarHidden(statusBarShouldBeHidden, animated: true)
+        navigationController.setNavigationBarHidden(statusBarShouldBeHidden, animated: true)
         let currentCell = getCell(for: currentPreviewIndex)
         currentCell?.statusBarShouldBeHidden = statusBarShouldBeHidden
-        let videoCell = currentCell as? PreviewVideoViewCell
-        if !statusBarShouldBeHidden {
-            if isShowToolbar {
-                photoToolbar.isHidden = false
-            }
-            navBgView?.isHidden = false
-            if currentCell?.photoAsset.mediaType == .video && config.singleClickCellAutoPlayVideo {
-                currentCell?.scrollContentView.videoView.stopPlay()
-            }
-            videoCell?.showToolView()
-            if let liveCell = currentCell as? PreviewLivePhotoViewCell {
-                liveCell.showMark()
-            }
-        }else {
-            if currentCell?.photoAsset.mediaType == .video && config.singleClickCellAutoPlayVideo {
-                currentCell?.scrollContentView.videoView.startPlay()
-            }
-            videoCell?.hideToolView()
-            if let liveCell = currentCell as? PreviewLivePhotoViewCell {
-                liveCell.hideMark()
-            }
-        }
+//        let videoCell = currentCell as? PreviewVideoViewCell
+//        if !statusBarShouldBeHidden {
+//            if isShowToolbar {
+//                photoToolbar.isHidden = false
+//            }
+//            navBgView?.isHidden = false
+//            if currentCell?.photoAsset.mediaType == .video && config.singleClickCellAutoPlayVideo {
+//                currentCell?.scrollContentView.videoView.stopPlay()
+//            }
+//            videoCell?.showToolView()
+//            if let liveCell = currentCell as? PreviewLivePhotoViewCell {
+//                liveCell.showMark()
+//            }
+//        }else {
+//            if currentCell?.photoAsset.mediaType == .video && config.singleClickCellAutoPlayVideo {
+//                currentCell?.scrollContentView.videoView.startPlay()
+//            }
+//            videoCell?.hideToolView()
+//            if let liveCell = currentCell as? PreviewLivePhotoViewCell {
+//                liveCell.hideMark()
+//            }
+//        }
         if isShowToolbar {
             UIView.animate(withDuration: 0.25) {
                 self.photoToolbar.alpha = self.statusBarShouldBeHidden ? 0 : 1

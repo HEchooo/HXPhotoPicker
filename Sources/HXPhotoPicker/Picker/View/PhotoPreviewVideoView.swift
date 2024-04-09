@@ -67,9 +67,9 @@ public class PhotoPreviewVideoView: VideoPlayerView {
     var videoPlayType: PhotoPreviewViewController.PlayType = .normal
     var isNetwork: Bool = true
     var playerTime: CGFloat = 0
+    var isPlaying: Bool = false
 
     private var loadingView: ProgressHUD?
-    private var isPlaying: Bool = false
     private var didEnterBackground: Bool = false
     private var enterPlayGroundShouldPlay: Bool = false
     private var canRemovePlayerObservers: Bool = false

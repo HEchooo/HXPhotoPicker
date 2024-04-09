@@ -10,6 +10,9 @@ import UIKit
 
 open class PreviewVideoViewCell: PhotoPreviewViewCell {
     var playButton: UIButton!
+    var isShowSlider: Bool = false
+
+    private var showToolTask: Task<Void, Never>?
 
     var videoPlayType: PhotoPreviewViewController.PlayType = .normal {
         didSet {
@@ -26,16 +29,19 @@ open class PreviewVideoViewCell: PhotoPreviewViewCell {
 
     func config(videoView: PhotoPreviewContentVideoView? = nil) {
         scrollContentView = videoView ?? PhotoPreviewContentVideoView()
-//        scrollContentView.videoView = videoView ?? PhotoPreviewVideoView()
         scrollContentView.delegate = self
         scrollContentView.videoView.delegate = self
+        scrollContentView.gestureRecognizers = []
+        let singleTap = UITapGestureRecognizer(target: self, action: #selector(scrollContentViewSingleTap))
+        scrollContentView.addGestureRecognizer(singleTap)
         initView()
         playButton = UIButton(type: UIButton.ButtonType.custom)
         playButton.setImage(.imageResource.picker.preview.emvideoPlay.eimage, for: UIControl.State.normal)
-        playButton.setImage(UIImage(), for: UIControl.State.selected)
+        playButton.setImage(.imageResource.picker.preview.emvideoPause.eimage, for: UIControl.State.selected)
         playButton.addTarget(self, action: #selector(didPlayButtonClick(button:)), for: UIControl.Event.touchUpInside)
         playButton.size = playButton.currentImage!.size
-//        playButton.alpha = 0
+        playButton.alpha = 0
+        playButton.isSelected = scrollContentView.videoView.isPlaying
         addSubview(playButton)
     }
 
@@ -43,8 +49,29 @@ open class PreviewVideoViewCell: PhotoPreviewViewCell {
     private func didPlayButtonClick(button: UIButton) {
         if !button.isSelected {
             scrollContentView.videoView.startPlay()
+            showPlayButton(show: false)
         } else {
             scrollContentView.videoView.stopPlay()
+        }
+    }
+
+    @objc
+    private func scrollContentViewSingleTap() {
+        if !isShowSlider {
+            showToolView()
+        } else {
+            hideToolView()
+        }
+    }
+
+    public func resetShowToolTask() {
+        showToolTask?.cancel()
+        showToolTask = Task { [weak self] in
+            try? await Task.sleep(nanoseconds: 3_000_000_000)
+            guard !Task.isCancelled else { return }
+            await MainActor.run {
+                self?.hideToolView()
+            }
         }
     }
 
@@ -54,6 +81,7 @@ open class PreviewVideoViewCell: PhotoPreviewViewCell {
     ///   - isPlay: 设置完是否需要播放
     public func seek(to time: TimeInterval, isPlay: Bool) {
         scrollContentView.videoView.seek(to: time, isPlay: isPlay)
+        resetShowToolTask()
     }
 
     /// 播放视频
@@ -78,11 +106,11 @@ open class PreviewVideoViewCell: PhotoPreviewViewCell {
     /// - Parameter duration: 当前播放的时长
     open func videoDidChangedPlayTime(duration: CGFloat, isAnimation: Bool) {}
 
-    /// 视频播放了
-    open func videoDidPlay() {}
-
-    /// 视频暂停了
-    open func videoDidPause() {}
+//    /// 视频播放了
+//    open func videoDidPlay() {}
+//
+//    /// 视频暂停了
+//    open func videoDidPause() {}
 
     /// 显示工具视图(例如滑动条)
     open func showToolView() {}
@@ -150,21 +178,15 @@ extension PreviewVideoViewCell: PhotoPreviewVideoViewDelegate {
 
     public func videoView(startPlay videoView: VideoPlayerView) {
         playButton.isSelected = true
-        videoDidPlay()
     }
 
     public func videoView(stopPlay videoView: VideoPlayerView) {
         playButton.isSelected = false
-        videoDidPause()
+        showPlayButton(show: true)
     }
 
     public func videoView(showPlayButton videoView: VideoPlayerView) {
-        if playButton.alpha == 0 {
-            playButton.isHidden = false
-            UIView.animate(withDuration: 0.15) {
-                self.playButton.alpha = 1
-            }
-        }
+        showPlayButton(show: true)
         if !statusBarShouldBeHidden {
             showToolView()
         }
@@ -175,15 +197,7 @@ extension PreviewVideoViewCell: PhotoPreviewVideoViewDelegate {
     }
 
     public func videoView(hidePlayButton videoView: VideoPlayerView) {
-        if playButton.alpha == 1 {
-            UIView.animate(withDuration: 0.15) {
-                self.playButton.alpha = 0
-            } completion: { isFinished in
-                if isFinished && self.playButton.alpha == 0 {
-                    self.playButton.isHidden = true
-                }
-            }
-        }
+        showPlayButton(show: false)
         hideToolView()
     }
 
@@ -202,6 +216,29 @@ extension PreviewVideoViewCell: PhotoPreviewVideoViewDelegate {
         {
             photoAsset.networkVideoAsset?.videoSize = presentationSize
             scrollContentView.updateContentSize(presentationSize)
+        }
+    }
+}
+
+public extension PreviewVideoViewCell {
+    func showPlayButton(show: Bool) {
+        if show {
+            if playButton.alpha == 0 {
+                playButton.isHidden = false
+                UIView.animate(withDuration: 0.15) {
+                    self.playButton.alpha = 1
+                }
+            }
+        } else {
+            if playButton.alpha == 1, scrollContentView.videoView.isPlaying {
+                UIView.animate(withDuration: 0.15) {
+                    self.playButton.alpha = 0
+                } completion: { isFinished in
+                    if isFinished, self.playButton.alpha == 0 {
+                        self.playButton.isHidden = true
+                    }
+                }
+            }
         }
     }
 }

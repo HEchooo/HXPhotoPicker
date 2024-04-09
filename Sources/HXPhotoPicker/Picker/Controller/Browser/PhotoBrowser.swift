@@ -554,18 +554,19 @@ extension PhotoBrowser: PhotoPickerControllerDelegate {
         previewSingleClick photoAsset: PhotoAsset,
         atIndex: Int
     ) {
-        if photoAsset.mediaType == .photo {
-            pickerController.dismiss(animated: true, completion: nil)
-        } else {
-            didHidden = !didHidden
-            UIView.animate(withDuration: 0.25) {
-                self.pageIndicator?.alpha = self.didHidden ? 0 : 1
-                self.gradualShadowImageView.alpha = self.didHidden ? 0 : 1
-            } completion: { _ in
-                self.pageIndicator?.alpha = self.didHidden ? 0 : 1
-                self.gradualShadowImageView.alpha = self.didHidden ? 0 : 1
-            }
-        }
+        pickerController.dismiss(animated: true, completion: nil)
+//        if photoAsset.mediaType == .photo {
+//            pickerController.dismiss(animated: true, completion: nil)
+//        } else {
+//            didHidden = !didHidden
+//            UIView.animate(withDuration: 0.25) {
+//                self.pageIndicator?.alpha = self.didHidden ? 0 : 1
+//                self.gradualShadowImageView.alpha = self.didHidden ? 0 : 1
+//            } completion: { _ in
+//                self.pageIndicator?.alpha = self.didHidden ? 0 : 1
+//                self.gradualShadowImageView.alpha = self.didHidden ? 0 : 1
+//            }
+//        }
     }
     
     public func pickerController(
@@ -815,27 +816,27 @@ open class PhotoBrowserVideoCell: PreviewVideoControlViewCell {
 
     public override func config(videoView: PhotoPreviewContentVideoView? = nil) {
         super.config(videoView: videoView)
-        maskLayer.colors = [
-            UIColor.black.withAlphaComponent(0).cgColor,
-            UIColor.black.withAlphaComponent(0.1).cgColor,
-            UIColor.black.withAlphaComponent(0.2).cgColor,
-            UIColor.black.withAlphaComponent(0.2).cgColor,
-            UIColor.black.withAlphaComponent(0.1).cgColor,
-            UIColor.black.withAlphaComponent(0).cgColor
-        ]
-        maskLayer.locations = [0.1, 0.2, 0.4, 0.5, 0.7, 1]
+//        maskLayer.colors = [
+//            UIColor.black.withAlphaComponent(0).cgColor,
+//            UIColor.black.withAlphaComponent(0.1).cgColor,
+//            UIColor.black.withAlphaComponent(0.2).cgColor,
+//            UIColor.black.withAlphaComponent(0.2).cgColor,
+//            UIColor.black.withAlphaComponent(0.1).cgColor,
+//            UIColor.black.withAlphaComponent(0).cgColor
+//        ]
+//        maskLayer.locations = [0.1, 0.2, 0.4, 0.5, 0.7, 1]
     }
 
     override public func layoutSubviews() {
         super.layoutSubviews()
-        sliderView.frame = CGRect(
-            x: 0,
-            y: height - 50 - UIDevice.bottomMargin - 30,
-            width: width,
-            height: 50 + UIDevice.bottomMargin
-        )
-        maskBackgroundView.frame = sliderView.frame
-        maskLayer.frame = maskBackgroundView.bounds
+//        sliderView.frame = CGRect(
+//            x: 0,
+//            y: height - 50 - UIDevice.bottomMargin - 30,
+//            width: width,
+//            height: 50 + UIDevice.bottomMargin
+//        )
+//        maskBackgroundView.frame = sliderView.frame
+//        maskLayer.frame = maskBackgroundView.bounds
     }
 }
 
