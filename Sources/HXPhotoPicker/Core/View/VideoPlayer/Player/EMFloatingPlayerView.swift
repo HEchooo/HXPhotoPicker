@@ -107,7 +107,7 @@ public class EMFloatingPlayerView: UIView {
         addSubview(self.tmpCorverView)
         self.tmpCorverView.frame = bounds
         self.tmpCorverView.contentMode = .scaleAspectFit
-        self.tmpCorverView.backgroundColor = .red
+        self.tmpCorverView.backgroundColor = .clear
         addSubview(self.closeButton)
         self.closeButton.frame = CGRect(x: self.cwidth - 24, y: 0, width: 24, height: 24)
         self.bind()
