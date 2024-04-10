@@ -52,7 +52,6 @@ public class PhotoPreviewVideoView: VideoPlayerView {
             guard let avAsset = avAsset else {
                 return
             }
-            try? AVAudioSession.sharedInstance().setCategory(.playback)
             delegate?.videoView(showPlayButton: self)
             if isNetwork && PhotoManager.shared.loadNetworkVideoMode == .play {
                 delegate?.videoView(self, isPlaybackLikelyToKeepUp: false)
@@ -71,8 +70,17 @@ public class PhotoPreviewVideoView: VideoPlayerView {
     var playerTime: CGFloat = 0
     var isPlaying: Bool = false
 
-    var isStartedPlay: Bool {
-        self.playbackTimeObserver != nil
+    public var isMute: Bool {
+        get { player.isMuted }
+        set {
+            player.isMuted = newValue
+            try? AVAudioSession.sharedInstance().setCategory(.playback)
+            try? AVAudioSession.sharedInstance().setActive(true)
+        }
+    }
+
+    public var isStartedPlay: Bool {
+        playbackTimeObserver != nil
     }
 
     private var loadingView: ProgressHUD?

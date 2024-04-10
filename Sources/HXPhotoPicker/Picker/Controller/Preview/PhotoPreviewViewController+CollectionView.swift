@@ -47,7 +47,10 @@ extension PhotoPreviewViewController: UICollectionViewDataSource {
                 for: indexPath
             ) as! PreviewVideoViewCell
             let videoCell = cell as! PreviewVideoViewCell
-            videoCell.config(videoView: photoAsset.vedioView)
+            videoCell.muteCallback = { [weak self] in
+                self?.config.isMute = $0
+            }
+            videoCell.config(videoView: photoAsset.vedioView, isMute: config.isMute)
             videoCell.videoPlayType = config.videoPlayType
             videoCell.statusBarShouldBeHidden = statusBarShouldBeHidden
             debugPrint(indexPath)

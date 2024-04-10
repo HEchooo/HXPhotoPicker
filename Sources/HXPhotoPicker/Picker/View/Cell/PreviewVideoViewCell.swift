@@ -12,6 +12,8 @@ open class PreviewVideoViewCell: PhotoPreviewViewCell {
     var playButton: UIButton!
     var isShowSlider: Bool = false
 
+    var muteCallback: ((Bool) -> Void)?
+
     private var showToolTask: Task<Void, Never>?
 
     var videoPlayType: PhotoPreviewViewController.PlayType = .normal {
@@ -35,7 +37,7 @@ open class PreviewVideoViewCell: PhotoPreviewViewCell {
         addSubview(playButton)
     }
 
-    func config(videoView: PhotoPreviewContentVideoView? = nil) {
+    func config(videoView: PhotoPreviewContentVideoView? = nil, isMute: Bool = true) {
         scrollContentView = videoView ?? PhotoPreviewContentVideoView()
         scrollContentView?.delegate = self
         scrollContentView?.videoView.delegate = self
@@ -178,6 +180,7 @@ extension PreviewVideoViewCell: PhotoPreviewVideoViewDelegate {
 
     public func videoView(startPlay videoView: VideoPlayerView) {
         playButton.isSelected = true
+        showPlayButton(show: false)
     }
 
     public func videoView(stopPlay videoView: VideoPlayerView) {
@@ -225,19 +228,22 @@ public extension PreviewVideoViewCell {
         if show {
             if playButton.alpha == 0 {
                 playButton.isHidden = false
-                UIView.animate(withDuration: 0.15) {
-                    self.playButton.alpha = 1
-                }
+                self.playButton.alpha = 1
+//                UIView.animate(withDuration: 0.15) {
+//                    self.playButton.alpha = 1
+//                }
             }
         } else {
             if playButton.alpha == 1, scrollContentView?.videoView.isPlaying ?? false {
-                UIView.animate(withDuration: 0.15) {
-                    self.playButton.alpha = 0
-                } completion: { isFinished in
-                    if isFinished, self.playButton.alpha == 0 {
-                        self.playButton.isHidden = true
-                    }
-                }
+                self.playButton.alpha = 0
+                self.playButton.isHidden = true
+//                UIView.animate(withDuration: 0.15) {
+//                    self.playButton.alpha = 0
+//                } completion: { isFinished in
+//                    if isFinished, self.playButton.alpha == 0 {
+//                        self.playButton.isHidden = true
+//                    }
+//                }
             }
         }
     }

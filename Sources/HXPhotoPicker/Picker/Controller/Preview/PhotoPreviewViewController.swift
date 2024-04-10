@@ -12,7 +12,7 @@ import Photos
 public class PhotoPreviewViewController: PhotoBaseViewController {
     
     weak var delegate: PhotoPreviewViewControllerDelegate?
-    public let config: PreviewViewConfiguration
+    public var config: PreviewViewConfiguration
     /// 当前预览的位置索引
     public var currentPreviewIndex: Int = 0
     /// 预览的资源数组

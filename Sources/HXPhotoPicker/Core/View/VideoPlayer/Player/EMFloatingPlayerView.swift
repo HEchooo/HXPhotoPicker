@@ -7,8 +7,8 @@
 
 import AVFoundation
 import Combine
-import UIKit
 import Kingfisher
+import UIKit
 
 public class EMFloatingPlayerView: UIView {
     public weak var contentView: UIView? {
@@ -31,6 +31,7 @@ public class EMFloatingPlayerView: UIView {
             self.floatingView = self.vedioView
             self.vedioView.delegate = self
             self.vedioView.videoView.delegate = self
+            self.vedioView.videoView.isMute = true
             self.vedioView.autoPlay = true
             self.vedioView.videoPlayType = .auto
 
@@ -47,7 +48,14 @@ public class EMFloatingPlayerView: UIView {
     public var coverUrl: String? {
         didSet {
             guard let coverUrl else { return }
-            tmpCorverView.kf.setImage(with: URL(string: coverUrl))
+            self.tmpCorverView.kf.setImage(with: URL(string: coverUrl)) { [weak tmpCorverView, weak self] result in
+                switch result {
+                case .success(let image):
+                    tmpCorverView?.image = image.image
+                    self?.isHidden = false
+                default: break
+                }
+            }
         }
     }
 
@@ -88,6 +96,7 @@ public class EMFloatingPlayerView: UIView {
     private var cancelSet = Set<AnyCancellable>()
     override public init(frame: CGRect) {
         super.init(frame: CGRect(x: UIScreen.main.bounds.size.width - self.cwidth - 12.5, y: UIScreen.main.bounds.size.height * 0.3, width: self.cwidth, height: self.cheight))
+        isHidden = true
         backgroundColor = .black
         addSubview(self.tmpCorverView)
         self.tmpCorverView.frame = bounds
@@ -142,14 +151,12 @@ public class EMFloatingPlayerView: UIView {
     }
 
     @objc private func handleTapGesture(tapGesture: UITapGestureRecognizer) {
-        guard self.floatingView != nil else { return }
+        guard self.floatingView != nil, self.vedioView.videoView.isStartedPlay else { return }
         self.clickPublisher.send()
     }
 
     @objc private func handlePanGesture(panGesture: UIPanGestureRecognizer) {
-        if panGesture.state == .began {
-            print("began")
-        }
+        if panGesture.state == .began {}
 
         if panGesture.state == .ended {
             self.viewDidEndMove(gesture: panGesture)
@@ -261,7 +268,9 @@ extension EMFloatingPlayerView: PhotoPreviewContentViewDelete {
 
 extension EMFloatingPlayerView: PhotoPreviewVideoViewDelegate {
     public func videoView(readyToPlay: VideoPlayerView) {
+        self.isHidden = false
         self.tmpCorverView.isHidden = true
+        updateLayout()
     }
 }
 
@@ -271,9 +280,9 @@ extension EMFloatingPlayerView {
         let aspectRatio = width / photoAsset.imageSize.width
         let contentWidth = width
         let contentHeight = photoAsset.imageSize.height * aspectRatio
-        vedioView.frame = CGRect(x: 0, y: 0, width: contentWidth, height: contentHeight)
+        self.vedioView.frame = CGRect(x: 0, y: 0, width: contentWidth, height: contentHeight)
         if contentHeight < height {
-            vedioView.center = CGPoint(x: width * 0.5, y: height * 0.5)
+            self.vedioView.center = CGPoint(x: width * 0.5, y: height * 0.5)
         }
     }
 }

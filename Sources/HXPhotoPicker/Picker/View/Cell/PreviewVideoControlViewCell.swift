@@ -12,6 +12,12 @@ open class PreviewVideoControlViewCell: PreviewVideoViewCell, EMVideoPlaySliderV
 //    public var maskLayer: CAGradientLayer!
 //    public var maskBackgroundView: UIView!
     public var sliderView: EMVideoPlaySliderView!
+    public let muteView = UIButton()
+
+    private var muteImage: String {
+        let isMute = scrollContentView?.videoView.isMute ?? true
+        return isMute ? "em_player_mute" : "em_player_sound"
+    }
 
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -19,14 +25,15 @@ open class PreviewVideoControlViewCell: PreviewVideoViewCell, EMVideoPlaySliderV
         sliderView.delegate = self
 
         contentView.addSubview(sliderView)
+        contentView.addSubview(muteView)
     }
 
     deinit {
         debugPrint("\(Self.self) is deinit")
     }
 
-    override public func config(videoView: PhotoPreviewContentVideoView? = nil) {
-        super.config(videoView: videoView)
+    override public func config(videoView: PhotoPreviewContentVideoView? = nil, isMute: Bool = true) {
+        super.config(videoView: videoView, isMute: isMute)
 //        maskBackgroundView = UIView()
 //        maskBackgroundView.alpha = 0
 //        maskLayer = PhotoTools.getGradientShadowLayer(false)
@@ -35,12 +42,23 @@ open class PreviewVideoControlViewCell: PreviewVideoViewCell, EMVideoPlaySliderV
 
         updateScrollContentView()
         hideToolView()
+
+        scrollContentView?.videoView.isMute = isMute
+        muteView.setImage(muteImage.eimage, for: .normal)
+        muteView.addTarget(self, action: #selector(muteClick), for: .touchUpInside)
     }
 
-    open override func prepareForReuse() {
+    override open func prepareForReuse() {
         super.prepareForReuse()
         scrollContentView?.removeFromSuperview()
         scrollContentView = nil
+    }
+
+    @objc private func muteClick() {
+        guard let scrollContentView else { return }
+        scrollContentView.videoView.isMute = !scrollContentView.videoView.isMute
+        muteCallback?(scrollContentView.videoView.isMute)
+        muteView.setImage(muteImage.eimage, for: .normal)
     }
 
     private func updateScrollContentView() {
@@ -62,11 +80,11 @@ open class PreviewVideoControlViewCell: PreviewVideoViewCell, EMVideoPlaySliderV
     }
 
 //    override public func videoDidPlay() {
-////        sliderView.isPlaying = true
+    ////        sliderView.isPlaying = true
 //    }
 //
 //    override public func videoDidPause() {
-////        sliderView.isPlaying = false
+    ////        sliderView.isPlaying = false
 //    }
 
     override public func showToolView() {
@@ -131,12 +149,26 @@ open class PreviewVideoControlViewCell: PreviewVideoViewCell, EMVideoPlaySliderV
                 width: width,
                 height: 44
             )
+
+            muteView.frame = CGRect(
+                x: 16,
+                y: scrollContentView.frame.maxY - 24 - 30,
+                width: 30,
+                height: 30
+            )
         } else {
             sliderView.frame = CGRect(
                 x: 0,
                 y: height - 50 - UIDevice.bottomMargin,
                 width: width,
                 height: 50 + UIDevice.bottomMargin
+            )
+
+            muteView.frame = CGRect(
+                x: 0,
+                y: height - 100 - UIDevice.bottomMargin,
+                width: 30,
+                height: 30
             )
         }
 //        maskBackgroundView.frame = sliderView.frame

@@ -299,7 +299,8 @@ open class PhotoBrowser: PhotoPickerController {
         pConfig.livePhotoMark.blurStyle = .dark
         pConfig.livePhotoMark.imageColor = "#ffffff".color
         pConfig.livePhotoMark.textColor = "#ffffff".color
-        
+        pConfig.isMute = config.isMute
+
         
         pConfig.loadNetworkVideoMode = config.loadNetworkVideoMode
         pConfig.customVideoCellClass = config.customVideoCellClass
@@ -506,6 +507,8 @@ public extension PhotoBrowser {
         public var modalPresentationStyle: UIModalPresentationStyle = .custom
 
         public var mediaType: EMMediaType = .Image
+
+        public var isMute: Bool = true
 
         public init() {}
     }
@@ -815,8 +818,8 @@ open class PhotoBrowserVideoCell: PreviewVideoControlViewCell {
         fatalError("init(coder:) has not been implemented")
     }
 
-    public override func config(videoView: PhotoPreviewContentVideoView? = nil) {
-        super.config(videoView: videoView)
+    public override func config(videoView: PhotoPreviewContentVideoView? = nil, isMute: Bool = true) {
+        super.config(videoView: videoView, isMute: isMute)
 //        maskLayer.colors = [
 //            UIColor.black.withAlphaComponent(0).cgColor,
 //            UIColor.black.withAlphaComponent(0.1).cgColor,
