@@ -10,21 +10,22 @@ import UIKit
 import Photos
 
 public class PhotoPreviewViewController: PhotoBaseViewController {
-    
+
     weak var delegate: PhotoPreviewViewControllerDelegate?
     public var config: PreviewViewConfiguration
     /// 当前预览的位置索引
     public var currentPreviewIndex: Int = 0
+    public var videoInitCurrentPreviewIndex: Int = 0
     /// 预览的资源数组
     public var previewAssets: [PhotoAsset] = []
     public var previewType: PhotoPreviewType = .none
     public var collectionView: UICollectionView!
-    
+
     private var collectionViewLayout: UICollectionViewFlowLayout!
     var numberOfPages: PhotoBrowser.NumberOfPagesHandler?
     var cellForIndex: PhotoBrowser.CellReloadContext?
     var assetForIndex: PhotoBrowser.RequiredAsset?
-    
+
     var photoToolbar: PhotoToolBar!
     var selectBoxControl: SelectBoxView!
     var interactiveTransition: PickerInteractiveTransition?
@@ -36,8 +37,12 @@ public class PhotoPreviewViewController: PhotoBaseViewController {
     var firstLayoutSubviews: Bool = true
     var requestPreviewTimer: Timer?
     var isTransitioning: Bool = false
+    var isPresentTransitioning: Bool = false
     var isShowToolbar: Bool = false
     var assetCount: Int {
+        if config.mediaType == .Vedio {
+            guard viewDidAppear, !isPresentTransitioning else { return 0 }
+        }
         if previewAssets.isEmpty {
             if let pages = numberOfPages?() {
                 return pages
@@ -58,9 +63,9 @@ public class PhotoPreviewViewController: PhotoBaseViewController {
         self.config = config.previewView
         super.init(config: config)
     }
-    
+
     var navBgView: UIToolbar?
-    
+
     public override func viewDidLoad() {
         super.viewDidLoad()
         if let photoToolbar = config.photoToolbar {
@@ -74,7 +79,7 @@ public class PhotoPreviewViewController: PhotoBaseViewController {
         view.clipsToBounds = true
         initView()
     }
-    
+
     override func updateColors() {
         if isTransitioning {
             return
@@ -83,11 +88,22 @@ public class PhotoPreviewViewController: PhotoBaseViewController {
             view.backgroundColor = config.statusBarHiddenBgColor
         }else {
             view.backgroundColor = PhotoManager.isDark ?
-                config.backgroundDarkColor :
-                config.backgroundColor
+            config.backgroundDarkColor :
+            config.backgroundColor
         }
     }
-    
+
+    // 只有视频才用，避免prensent transition正常
+    // 修复 videoview 在 transition 的时候，被cell赋值，导致消失的问题
+    public func reloadWhenPresentTransitionFinished() {
+        collectionView.reloadData()
+        let margin: CGFloat = 20
+        let itemWidth = view.width + margin
+        collectionView.setContentOffset(CGPoint(x: CGFloat(videoInitCurrentPreviewIndex) * itemWidth, y: 0), animated: false)
+        // fix 当默认视频不是第一帧，需要在 transition 完成之后重置默认 index
+        currentPreviewIndex = videoInitCurrentPreviewIndex
+    }
+
     public override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
         let margin: CGFloat = 20
@@ -97,7 +113,9 @@ public class PhotoPreviewViewController: PhotoBaseViewController {
         let contentWidth = (view.width + itemWidth) * CGFloat(assetCount)
         collectionView.frame = CGRect(x: -(margin * 0.5), y: 0, width: itemWidth, height: view.height)
         collectionView.contentSize = CGSize(width: contentWidth, height: view.height)
-        collectionView.setContentOffset(CGPoint(x: CGFloat(currentPreviewIndex) * itemWidth, y: 0), animated: false)
+        if config.mediaType != .Vedio {
+            collectionView.setContentOffset(CGPoint(x: CGFloat(currentPreviewIndex) * itemWidth, y: 0), animated: false)
+        }
         DispatchQueue.main.async {
             if self.orientationDidChange {
                 let cell = self.getCell(for: self.currentPreviewIndex)

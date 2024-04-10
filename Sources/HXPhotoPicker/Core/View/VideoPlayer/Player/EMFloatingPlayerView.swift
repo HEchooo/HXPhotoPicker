@@ -28,7 +28,10 @@ public class EMFloatingPlayerView: UIView {
                 self.vedioView.cancelRequest()
                 return
             }
-            self.floatingView = self.vedioView
+//            self.floatingView = self.vedioView
+            addSubview(self.vedioView)
+            sendSubviewToBack(self.vedioView)
+            self.vedioView.frame = bounds
             self.vedioView.delegate = self
             self.vedioView.videoView.delegate = self
             self.vedioView.videoView.isMute = true
@@ -62,7 +65,10 @@ public class EMFloatingPlayerView: UIView {
     public var presentationSize: CGSize = .zero
     public var vedioView: PhotoPreviewContentVideoView = .init() {
         didSet {
-            self.floatingView = self.vedioView
+//            self.floatingView = self.vedioView
+            addSubview(self.vedioView)
+            sendSubviewToBack(self.vedioView)
+            self.vedioView.frame = bounds
             self.vedioView.delegate = self
             self.vedioView.autoPlay = true
             updateLayout()
@@ -73,20 +79,20 @@ public class EMFloatingPlayerView: UIView {
 
 //    private lazy var player = EMPlayerManager.shared.buildPlayer()
 
-    private var floatingView: UIView? {
-        didSet {
-            guard let floatingView else { return }
-            addSubview(floatingView)
-            sendSubviewToBack(floatingView)
-            floatingView.frame = bounds
-        }
-    }
+//    private var floatingView: UIView? {
+//        didSet {
+//            guard let floatingView else { return }
+//            addSubview(floatingView)
+//            sendSubviewToBack(floatingView)
+//            floatingView.frame = bounds
+//        }
+//    }
 
-    public func clean() {
-        self.floatingView?.removeFromSuperview()
-        self.floatingView?.gestureRecognizers = nil
-        self.floatingView = nil
-    }
+//    public func clean() {
+//        self.floatingView?.removeFromSuperview()
+//        self.floatingView?.gestureRecognizers = nil
+//        self.floatingView = nil
+//    }
 
     private lazy var closeButton = EMFloatingPlayerViewButton()
     private let cwidth: CGFloat = 125
@@ -151,7 +157,7 @@ public class EMFloatingPlayerView: UIView {
     }
 
     @objc private func handleTapGesture(tapGesture: UITapGestureRecognizer) {
-        guard self.floatingView != nil, self.vedioView.videoView.isStartedPlay else { return }
+        guard self.vedioView.videoView.isStartedPlay else { return }
         self.clickPublisher.send()
     }
 

@@ -300,6 +300,7 @@ open class PhotoBrowser: PhotoPickerController {
         pConfig.livePhotoMark.imageColor = "#ffffff".color
         pConfig.livePhotoMark.textColor = "#ffffff".color
         pConfig.isMute = config.isMute
+        pConfig.mediaType = config.mediaType
 
         
         pConfig.loadNetworkVideoMode = config.loadNetworkVideoMode

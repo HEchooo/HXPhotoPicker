@@ -11,9 +11,9 @@ class PreviewPhotoViewCell: PhotoPreviewViewCell, PhotoPreviewContentViewDelete 
      
     override init(frame: CGRect) {
         super.init(frame: frame)
+        initView()
         scrollContentView = PhotoPreviewContentPhotoView()
         scrollContentView?.delegate = self
-        initView()
     }
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")

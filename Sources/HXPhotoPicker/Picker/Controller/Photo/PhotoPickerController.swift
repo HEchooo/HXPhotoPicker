@@ -260,6 +260,7 @@ open class PhotoPickerController: UINavigationController {
         vc.previewType = previewType
         vc.previewAssets = previewAssets
         vc.currentPreviewIndex = currentIndex
+        vc.videoInitCurrentPreviewIndex = currentIndex
         self.viewControllers = [vc]
         self.modalPresentationStyle = modalPresentationStyle
         if modalPresentationStyle == .custom {

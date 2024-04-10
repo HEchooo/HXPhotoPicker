@@ -11,6 +11,7 @@ import UIKit
 // MARK: Preview interface configuration class / 预览界面配置类
 public struct PreviewViewConfiguration {
 
+    public var mediaType: PhotoBrowser.EMMediaType = .Image
     public var isMute: Bool = true
 
     /// 自定义视频Cell

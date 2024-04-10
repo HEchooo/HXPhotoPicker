@@ -139,7 +139,8 @@ open class PhotoPreviewViewCell: UICollectionViewCell, UIScrollViewDelegate {
         scrollContentView?.requestPreviewAsset()
     }
     func cancelRequest() {
-        scrollContentView?.videoView.stopPlay()
+        guard let videoView = scrollContentView?.videoView else { return }
+        videoView.stopPlay()
 //        scrollContentView?.cancelRequest()
     }
     @objc func singleTap(tap: UITapGestureRecognizer) {
