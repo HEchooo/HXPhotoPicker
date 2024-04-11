@@ -103,6 +103,7 @@ open class PreviewVideoViewCell: PhotoPreviewViewCell {
     /// 视频缓冲区发生改变
     /// - Parameter duration: 缓存时长
     open func videoDidChangedBuffer(duration: CGFloat) {}
+    open func videoSizeDidChanged() {}
 
     /// 视频播放时间发生改变
     /// - Parameter duration: 当前播放的时长
@@ -221,6 +222,7 @@ extension PreviewVideoViewCell: PhotoPreviewVideoViewDelegate {
         {
             photoAsset.networkVideoAsset?.videoSize = presentationSize
             scrollContentView?.updateContentSize(presentationSize)
+            videoSizeDidChanged()
         }
     }
 }

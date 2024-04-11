@@ -69,6 +69,7 @@ open class PreviewVideoControlViewCell: PreviewVideoViewCell, EMVideoPlaySliderV
 
     override public func videoReadyToPlay(duration: CGFloat) {
         sliderView.videoDuration = duration
+        setNeedsLayout()
     }
 
     override public func videoDidChangedBuffer(duration: CGFloat) {
@@ -100,6 +101,10 @@ open class PreviewVideoControlViewCell: PreviewVideoViewCell, EMVideoPlaySliderV
         sliderView.showSliderView(show: false)
         showPlayButton(show: false)
         hideMask()
+    }
+
+    open override func videoSizeDidChanged() {
+        setNeedsLayout()
     }
 
     override public func showMask() {

@@ -55,6 +55,7 @@ public class EMFloatingPlayerView: UIView {
                 switch result {
                 case .success(let image):
                     tmpCorverView?.image = image.image
+                    self?.updateFrameFirstTime()
                     self?.isHidden = false
                 default: break
                 }
@@ -71,7 +72,8 @@ public class EMFloatingPlayerView: UIView {
             self.vedioView.frame = bounds
             self.vedioView.delegate = self
             self.vedioView.autoPlay = true
-            updateLayout()
+            updateLayoutFromTransition()
+            setNeedsDisplay()
         }
     }
 
@@ -95,8 +97,8 @@ public class EMFloatingPlayerView: UIView {
 //    }
 
     private lazy var closeButton = EMFloatingPlayerViewButton()
-    private let cwidth: CGFloat = 125
-    private let cheight: CGFloat = 166
+    private let cwidth: CGFloat = SizeType.videoW
+    private let cheight: CGFloat = SizeType.videoW
     private lazy var paddingEdgeInset: UIEdgeInsets = .init(top: 60, left: 12.5, bottom: 110, right: 12.5)
 
     private var cancelSet = Set<AnyCancellable>()
@@ -131,8 +133,14 @@ public class EMFloatingPlayerView: UIView {
         }.store(in: &self.cancelSet)
     }
 
+    private var tmpBorderLayer: CAShapeLayer?
+
     override public func draw(_ rect: CGRect) {
         super.draw(rect)
+
+        if let tmpBorderLayer {
+            tmpBorderLayer.removeFromSuperlayer()
+        }
 
         let halfHeight = 12
         let maskPath = UIBezierPath(roundedRect: self.bounds,
@@ -153,6 +161,7 @@ public class EMFloatingPlayerView: UIView {
         borderLayer.strokeColor = UIColor.white.withAlphaComponent(0.9).cgColor
         borderLayer.fillColor = UIColor.clear.cgColor
         borderLayer.frame = self.bounds
+        tmpBorderLayer = borderLayer
         self.layer.addSublayer(borderLayer)
     }
 
@@ -268,28 +277,143 @@ class EMFloatingPlayerViewButton: UIView {
 
 extension EMFloatingPlayerView: PhotoPreviewContentViewDelete {
     public func contentView(updateContentSize contentView: PhotoPreviewContentViewProtocol) {
-        updateLayout()
+        updateLayoutFirstTime()
     }
 }
 
 extension EMFloatingPlayerView: PhotoPreviewVideoViewDelegate {
     public func videoView(readyToPlay: VideoPlayerView) {
+        updateFrameFirstTime()
         self.isHidden = false
         self.tmpCorverView.isHidden = true
-        updateLayout()
+        updateLayoutFirstTime()
     }
 }
 
 extension EMFloatingPlayerView {
-    func updateLayout() {
-        guard let photoAsset = vedioView.photoAsset else { return }
-        let vsize = tmpCorverView.image?.size ?? photoAsset.imageSize
+    var videoSizeFirstFromTmpCorverView: CGSize? {
+        var vsize = self.tmpCorverView.image?.size
+        if vsize == nil {
+            guard let photoAsset = vedioView.photoAsset else { return nil }
+            vsize = photoAsset.imageSize
+        }
+        return vsize
+    }
+
+    var videoSizeFirstFromVideoView: CGSize? {
+        guard let photoAsset = vedioView.photoAsset else {
+            return self.tmpCorverView.image?.size
+        }
+        return photoAsset.imageSize
+    }
+
+    var ratioSizeFromTmpCorverView: CGSize {
+        guard let videoSizeFirstFromTmpCorverView else { return .init(width: self.cwidth, height: self.cheight) }
+        return SizeType.sizeType(size: videoSizeFirstFromTmpCorverView).size
+    }
+
+    var ratioSizeFromFromVideoView: CGSize {
+        guard let videoSizeFirstFromVideoView else { return .init(width: self.cwidth, height: self.cheight) }
+        return SizeType.sizeType(size: videoSizeFirstFromVideoView).size
+    }
+
+    public func updateFrameFirstTime() {
+        var tmpFrame = frame
+        tmpFrame.size = self.ratioSizeFromTmpCorverView
+        frame = tmpFrame
+    }
+
+    public func updateLayoutFirstTime() {
+        guard let vsize = videoSizeFirstFromTmpCorverView else { return }
         let aspectRatio = width / vsize.width
         let contentWidth = width
         let contentHeight = vsize.height * aspectRatio
         self.vedioView.frame = CGRect(x: 0, y: 0, width: contentWidth, height: contentHeight)
         if contentHeight < height {
             self.vedioView.center = CGPoint(x: width * 0.5, y: height * 0.5)
+        }
+    }
+
+    private func updateLayoutFromTransition() {
+        guard let vsize = videoSizeFirstFromVideoView else { return }
+        let aspectRatio = width / vsize.width
+        let contentWidth = width
+        let contentHeight = vsize.height * aspectRatio
+        self.vedioView.frame = CGRect(x: 0, y: 0, width: contentWidth, height: contentHeight)
+        if contentHeight < height {
+            self.vedioView.center = CGPoint(x: width * 0.5, y: height * 0.5)
+        }
+    }
+
+    public func updateFrameWithNewVideoView(size: CGSize) {
+        let newSize = SizeType.sizeType(size: size).size
+        var tmpFrame = frame
+        tmpFrame.size = newSize
+        frame = tmpFrame
+    }
+}
+
+enum SizeType {
+    case s1v1
+    case s3v4
+    case s9v16
+
+    var rate: Double {
+        switch self {
+        case .s1v1:
+            return 1.0
+        case .s3v4:
+            return 4.0 / 3.0
+        case .s9v16:
+            return 16.0 / 9.0
+        }
+    }
+
+    var size: CGSize {
+        switch self {
+        case .s1v1:
+            return .init(width: Self.videoW, height: self.height)
+        case .s3v4:
+            return .init(width: Self.videoW, height: self.height)
+        case .s9v16:
+            return .init(width: Self.videoW, height: self.height)
+        }
+    }
+
+    var height: CGFloat {
+        switch self {
+        case .s1v1:
+            return SizeType.videoW
+        case .s3v4:
+            return SizeType.videoW * (4.0 / 3.0)
+        case .s9v16:
+            return SizeType.videoW * (16.0 / 9.0)
+        }
+    }
+
+    static var videoW: CGFloat {
+        126
+    }
+
+    static func sizeType(size: CGSize) -> Self {
+        let width = size.width
+        let height = size.height
+        let r1v1 = 1.0
+        let r3v4 = 3.0 / 4.0
+        let r9v16 = 9.0 / 16.0
+        let rate = CGFloat(width) / CGFloat(height)
+        if rate >= 1.0 {
+            return .s1v1
+        } else if r3v4 <= rate && rate < 1.0 {
+            let d1 = abs(rate - r1v1)
+            let d2 = abs(rate - r3v4)
+            return d1 > d2 ? .s3v4 : .s1v1
+        } else if r9v16 <= rate && rate < r3v4 {
+            let d2 = abs(rate - r3v4)
+            let d3 = abs(rate - r9v16)
+            return d2 > d3 ? .s9v16 : .s3v4
+        } else {
+            return .s9v16
         }
     }
 }
