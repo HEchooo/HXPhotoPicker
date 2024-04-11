@@ -171,7 +171,10 @@ open class PhotoPreviewViewCell: UICollectionViewCell, UIScrollViewDelegate {
         }
     }
     public func viewForZooming(in scrollView: UIScrollView) -> UIView? {
-        return scrollContentView
+        if !(self is PhotoBrowserVideoCell) {
+            return scrollContentView
+        }
+        return nil
     }
     public func scrollViewDidZoom(_ scrollView: UIScrollView) {
         let offsetX = (scrollView.width > scrollView.contentSize.width) ?
