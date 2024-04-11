@@ -55,7 +55,7 @@ public class PhotoPreviewVideoView: VideoPlayerView {
             delegate?.videoView(showPlayButton: self)
             if isNetwork && PhotoManager.shared.loadNetworkVideoMode == .play {
                 delegate?.videoView(self, isPlaybackLikelyToKeepUp: false)
-                loadingView = ProgressHUD.showLoading(addedTo: loadingSuperview(), animated: true)
+//                loadingView = ProgressHUD.showLoading(addedTo: loadingSuperview(), animated: true)
             }
             delegate?.videoView(resetPlay: self)
             let playerItem = AVPlayerItem(asset: avAsset)
@@ -180,7 +180,7 @@ public class PhotoPreviewVideoView: VideoPlayerView {
         {
             if isNetwork && PhotoManager.shared.loadNetworkVideoMode == .play && loadingView == nil {
                 delegate?.videoView(self, isPlaybackLikelyToKeepUp: false)
-                loadingView = ProgressHUD.showLoading(addedTo: loadingSuperview(), animated: true)
+//                loadingView = ProgressHUD.showLoading(addedTo: loadingSuperview(), animated: true)
             }
         }
     }
@@ -320,7 +320,7 @@ public class PhotoPreviewVideoView: VideoPlayerView {
                     case AVPlayerItem.Status.failed:
                         // 初始化失败
                         self.cancelPlayer()
-                        ProgressHUD.showWarning(addedTo: self, text: .textPreview.videoLoadFailedHudTitle.text, animated: true, delayHide: 1.5)
+//                        ProgressHUD.showWarning(addedTo: self, text: .textPreview.videoLoadFailedHudTitle.text, animated: true, delayHide: 1.5)
                     default:
                         break
                     }
@@ -355,7 +355,7 @@ public class PhotoPreviewVideoView: VideoPlayerView {
                     if !isPlaybackLikelyToKeepUp {
                         // 缓冲中
                         if self.loadingView == nil {
-                            self.loadingView = ProgressHUD.showLoading(addedTo: self.loadingSuperview(), animated: true)
+//                            self.loadingView = ProgressHUD.showLoading(addedTo: self.loadingSuperview(), animated: true)
                         } else {
                             self.loadingView?.isHidden = false
                         }

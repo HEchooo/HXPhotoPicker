@@ -190,8 +190,10 @@ extension PreviewVideoViewCell: PhotoPreviewVideoViewDelegate {
 
     public func videoView(showPlayButton videoView: VideoPlayerView) {
         showPlayButton(show: true)
-        if !statusBarShouldBeHidden {
+        if !statusBarShouldBeHidden && !firstAppear {
             showToolView()
+        } else {
+            firstAppear = false
         }
     }
 

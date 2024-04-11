@@ -40,6 +40,7 @@ open class PhotoPreviewViewCell: UICollectionViewCell, UIScrollViewDelegate {
     var scrollView: UIScrollView!
     
     var statusBarShouldBeHidden = false
+    var firstAppear = true
     var allowInteration: Bool = true
     
     override init(frame: CGRect) {
