@@ -283,9 +283,10 @@ extension EMFloatingPlayerView: PhotoPreviewVideoViewDelegate {
 extension EMFloatingPlayerView {
     func updateLayout() {
         guard let photoAsset = vedioView.photoAsset else { return }
-        let aspectRatio = width / photoAsset.imageSize.width
+        let vsize = tmpCorverView.image?.size ?? photoAsset.imageSize
+        let aspectRatio = width / vsize.width
         let contentWidth = width
-        let contentHeight = photoAsset.imageSize.height * aspectRatio
+        let contentHeight = vsize.height * aspectRatio
         self.vedioView.frame = CGRect(x: 0, y: 0, width: contentWidth, height: contentHeight)
         if contentHeight < height {
             self.vedioView.center = CGPoint(x: width * 0.5, y: height * 0.5)
