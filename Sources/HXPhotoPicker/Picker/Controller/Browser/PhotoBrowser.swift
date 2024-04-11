@@ -819,8 +819,8 @@ open class PhotoBrowserVideoCell: PreviewVideoControlViewCell {
         fatalError("init(coder:) has not been implemented")
     }
 
-    public override func config(videoView: PhotoPreviewContentVideoView? = nil, isMute: Bool = true) {
-        super.config(videoView: videoView, isMute: isMute)
+    public override func config(videoView: PhotoPreviewContentVideoView? = nil) {
+        super.config(videoView: videoView)
 //        maskLayer.colors = [
 //            UIColor.black.withAlphaComponent(0).cgColor,
 //            UIColor.black.withAlphaComponent(0.1).cgColor,

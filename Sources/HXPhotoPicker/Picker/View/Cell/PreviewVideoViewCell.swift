@@ -37,7 +37,7 @@ open class PreviewVideoViewCell: PhotoPreviewViewCell {
         addSubview(playButton)
     }
 
-    func config(videoView: PhotoPreviewContentVideoView? = nil, isMute: Bool = true) {
+    func config(videoView: PhotoPreviewContentVideoView? = nil) {
         scrollContentView = videoView ?? PhotoPreviewContentVideoView()
         scrollContentView?.delegate = self
         scrollContentView?.videoView.delegate = self

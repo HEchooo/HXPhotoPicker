@@ -97,7 +97,7 @@ public class PhotoPreviewViewController: PhotoBaseViewController {
     // 修复 videoview 在 transition 的时候，被cell赋值，导致消失的问题
     public func reloadWhenPresentTransitionFinished() {
         collectionView.reloadData()
-        let margin: CGFloat = 20
+        let margin: CGFloat = 0
         let itemWidth = view.width + margin
         collectionView.setContentOffset(CGPoint(x: CGFloat(videoInitCurrentPreviewIndex) * itemWidth, y: 0), animated: false)
         // fix 当默认视频不是第一帧，需要在 transition 完成之后重置默认 index
@@ -106,7 +106,7 @@ public class PhotoPreviewViewController: PhotoBaseViewController {
 
     public override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
-        let margin: CGFloat = 20
+        let margin: CGFloat = 0
         let itemWidth = view.width + margin
         collectionViewLayout.minimumLineSpacing = margin
         collectionViewLayout.itemSize = view.size
@@ -253,7 +253,7 @@ extension PhotoPreviewViewController {
         collectionViewLayout.scrollDirection = .horizontal
         collectionViewLayout.minimumLineSpacing = 0
         collectionViewLayout.minimumInteritemSpacing = 0
-        collectionViewLayout.sectionInset = UIEdgeInsets(top: 0, left: 10, bottom: 0, right: 10)
+        collectionViewLayout.sectionInset = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0)
         collectionView = UICollectionView(frame: view.bounds, collectionViewLayout: collectionViewLayout)
         collectionView.backgroundColor = .clear
         collectionView.dataSource = self

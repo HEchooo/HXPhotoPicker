@@ -47,10 +47,8 @@ extension PhotoPreviewViewController: UICollectionViewDataSource {
                 for: indexPath
             ) as! PreviewVideoViewCell
             let videoCell = cell as! PreviewVideoViewCell
-            videoCell.muteCallback = { [weak self] in
-                self?.config.isMute = $0
-            }
-            videoCell.config(videoView: photoAsset.vedioView, isMute: config.isMute)
+            videoCell.muteCallback = { [weak self] in self?.config.isMute = $0 }
+            videoCell.config(videoView: photoAsset.vedioView)
             videoCell.videoPlayType = config.videoPlayType
             videoCell.statusBarShouldBeHidden = statusBarShouldBeHidden
             debugPrint(indexPath)
@@ -73,6 +71,9 @@ extension PhotoPreviewViewController: UICollectionViewDelegate {
         myCell.scrollContentView?.startAnimated()
         if myCell.photoAsset.mediaType == .video {
             myCell.scrollView.zoomScale = 1
+        }
+        if let cell = cell as? PreviewVideoControlViewCell  {
+            cell.configMute(isMute: config.isMute)
         }
         myCell.checkContentSize()
         pickerController.pickerDelegate?.pickerController(

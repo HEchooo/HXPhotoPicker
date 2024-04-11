@@ -32,8 +32,8 @@ open class PreviewVideoControlViewCell: PreviewVideoViewCell, EMVideoPlaySliderV
         debugPrint("\(Self.self) is deinit")
     }
 
-    override public func config(videoView: PhotoPreviewContentVideoView? = nil, isMute: Bool = true) {
-        super.config(videoView: videoView, isMute: isMute)
+    override public func config(videoView: PhotoPreviewContentVideoView? = nil) {
+        super.config(videoView: videoView)
 //        maskBackgroundView = UIView()
 //        maskBackgroundView.alpha = 0
 //        maskLayer = PhotoTools.getGradientShadowLayer(false)
@@ -43,9 +43,12 @@ open class PreviewVideoControlViewCell: PreviewVideoViewCell, EMVideoPlaySliderV
         updateScrollContentView()
         hideToolView()
 
+        muteView.addTarget(self, action: #selector(muteClick), for: .touchUpInside)
+    }
+
+    func configMute(isMute: Bool = true) {
         scrollContentView?.videoView.isMute = isMute
         muteView.setImage(muteImage.eimage, for: .normal)
-        muteView.addTarget(self, action: #selector(muteClick), for: .touchUpInside)
     }
 
     override open func prepareForReuse() {
@@ -103,7 +106,7 @@ open class PreviewVideoControlViewCell: PreviewVideoViewCell, EMVideoPlaySliderV
         hideMask()
     }
 
-    open override func videoSizeDidChanged() {
+    override open func videoSizeDidChanged() {
         setNeedsLayout()
     }
 
