@@ -97,11 +97,11 @@ public class EMFloatingPlayerView: UIView {
     private lazy var closeButton = EMFloatingPlayerViewButton()
     private let cwidth: CGFloat = 125
     private let cheight: CGFloat = 166
-    private lazy var paddingEdgeInset: UIEdgeInsets = .init(top: 60, left: 12.5, bottom: 80, right: 12.5)
+    private lazy var paddingEdgeInset: UIEdgeInsets = .init(top: 60, left: 12.5, bottom: 110, right: 12.5)
 
     private var cancelSet = Set<AnyCancellable>()
     override public init(frame: CGRect) {
-        super.init(frame: CGRect(x: UIScreen.main.bounds.size.width - self.cwidth - 12.5, y: UIScreen.main.bounds.size.height * 0.3, width: self.cwidth, height: self.cheight))
+        super.init(frame: CGRect(x: UIScreen.main.bounds.size.width - self.cwidth - 12.5, y: 138, width: self.cwidth, height: self.cheight))
         isHidden = true
         backgroundColor = .black
         addSubview(self.tmpCorverView)
